@@ -27,11 +27,22 @@
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
+    <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <script src="cordova.js"></script>
+
+    <!-- Third-party Libs -->
+    <script src="lib/lodash/dist/lodash.min.js"></script>
+    <script src="lib/node_modules/angular-google-maps/dist/angular-google-maps.min.js"></script>
+    <script src="lib/node_modules/angular-simple-logger/dist/angular-simple-logger.min.js"></script>
+    <script src="lib/firebase/firebase.js"></script>
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
-    <script src="js/controllers.js"></script>
+    <!-- Providers -->
+    <script src="js/factories/KeyGetter.js"></script>
+    <!-- Controllers -->
+    <script src="js/controllers/AppCtrl.js"></script>
+    <script src="js/controllers/MarkersCtrl.js"></script>
   </head>
 
   <body ng-app="starter">

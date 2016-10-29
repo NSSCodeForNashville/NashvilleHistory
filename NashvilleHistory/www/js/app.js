@@ -66,7 +66,7 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
       }
     })
     .state('app.markers', {
-      url: '/explore/markers',
+      url: '/markers',
       views: {
         'menuContent': {
           templateUrl: 'templates/markers.html',
@@ -85,6 +85,6 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/markers');
 });
 

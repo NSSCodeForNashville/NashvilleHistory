@@ -4,10 +4,10 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'uiGmapgoogle-maps', 'KeyGetter'])
+var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
 .constant("FirebaseURL", "https://www.gstatic.com/firebasejs/3.5.2/firebase.js")
 
-.config(function(uiGmapGoogleMapApiProvider, ImportantKeys) {
+.config(function(uiGmapGoogleMapApiProvider, KeyGetter) {
   uiGmapGoogleMapApiProvider.configure({
       key: KeyGetter.googleMapsKey,
       v: '3.24',
@@ -15,7 +15,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'uiGmapgoogle-maps', 
   })
 })
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, KeyGetter) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -65,12 +65,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'uiGmapgoogle-maps', 
         }
       }
     })
-    .state('app.playlists', {
-      url: '/playlists',
+    .state('app.markers', {
+      url: '/explore/markers',
       views: {
         'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
+          templateUrl: 'templates/markers.html',
+          controller: 'MarkersCtrl'
         }
       }
     })

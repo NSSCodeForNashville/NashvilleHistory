@@ -1,13 +1,21 @@
 'use strict';
 
-app.controller('PlaylistsCtrl', function($scope, $state,$cordovaGeolocation) {
+app.controller('MarkersCtrl', function($scope, $state,$cordovaGeolocation) {
   //The map that shows up when the user opens the app. It
   //The terrain view of the map should show up
   $scope.options = {
-    mapTypeId: 'terrain',
+    mapTypeId: 'roadmap',
     maxZoom: 18,
-    minZoom: 8
+    minZoom: 10
   };
+
+  $scope.map = {
+    center: {
+      latitude: 36.174465,
+      longitude: -86.767960
+    },
+    zoom: 13
+  }
 
   let posOptions = {timeout: 10000, enableHighAccuracy: false};
   $cordovaGeolocation
@@ -15,11 +23,9 @@ app.controller('PlaylistsCtrl', function($scope, $state,$cordovaGeolocation) {
     .then(function (position) {
       $scope.map = {
         center: {latitude: position.coords.latitude, longitude: position.coords.longitude },
-        zoom: 10,
-        bounds: {},
-        control: {},
-        pan: true
+        zoom: 15
       };
+      console.log($scope.map)
     }, function(err) {
       console.log("Could not get location");
     });
@@ -41,13 +47,5 @@ app.controller('PlaylistsCtrl', function($scope, $state,$cordovaGeolocation) {
       var long = position.coords.longitude
   });
 
-
   watch.clearWatch();
-  // OR
-  $cordovaGeolocation.clearWatch(watch)
-    .then(function(result) {
-      // success
-      }, function (error) {
-      // error
-    });
 })

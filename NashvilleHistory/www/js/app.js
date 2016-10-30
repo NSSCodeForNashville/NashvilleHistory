@@ -1,19 +1,5 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.controllers' is found in controllers.js
+// Configure app-wide services here
 var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
-.constant("FirebaseURL", "https://www.gstatic.com/firebasejs/3.5.2/firebase.js")
-
-.config(function(uiGmapGoogleMapApiProvider, KeyGetter) {
-  uiGmapGoogleMapApiProvider.configure({
-      key: KeyGetter.googleMapsKey,
-      v: '3.24',
-      libraries: 'weather,geometry,visualization,places'
-  })
-})
 
 .run(function($ionicPlatform, KeyGetter) {
   $ionicPlatform.ready(function() {
@@ -38,16 +24,22 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
   firebase.initializeApp(authConfig);
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+.config(function($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider, KeyGetter) {
+  // Angular Maps Configuration
+  uiGmapGoogleMapApiProvider.configure({
+      key: KeyGetter.googleMapsKey,
+      v: '3.24',
+      libraries: 'weather,geometry,visualization,places'
+  })
 
-    .state('app', {
+  // ROUTING (works like $routeProvider)
+  $stateProvider
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
   })
-
   .state('app.search', {
     url: '/search',
     views: {
@@ -56,7 +48,6 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
       }
     }
   })
-
   .state('app.browse', {
       url: '/browse',
       views: {
@@ -65,26 +56,16 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
         }
       }
     })
-    .state('app.markers', {
-      url: '/explore/markers',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/markers.html',
-          controller: 'MarkersCtrl'
-        }
-      }
-    })
-
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.markers', {
+    url: '/markers',
     views: {
       'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        templateUrl: 'templates/markers.html',
+        controller: 'MarkersCtrl'
       }
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/markers');
 });
 

@@ -14,3 +14,7 @@ From the terminal command line in your `/NashvilleHistory` folder, run the follo
 npm install
 bower install
 ```
+When all dependencies are installed run the command
+
+```ionic serve```
+

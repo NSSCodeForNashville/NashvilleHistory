@@ -1,6 +1,6 @@
 // angular.module('starter.controllers', [])
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, AjaxFact) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -39,5 +39,21 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
       $scope.closeLogin();
     }, 1000);
   };
+
+  $scope.HistoricalMarkers = [];
+
+  AjaxFact.getHistoricalMarkers()
+    .then(function(data) {
+      console.log(data);
+      for (var i = 0; i < data.data.length; i++)
+        $scope.HistoricalMarkers.push({
+          latitude: data.data[i].latitude,
+          longitude: data.data[i].longitude,
+          name: data.data[i].title,
+          id: data.data[i].number
+        })
+    console.log($scope.HistoricalMarkers);
+    });
+
 })
 

@@ -16,6 +16,14 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation) {
     zoom: 10
   }
 
+  $scope.map = {
+    center: {
+      latitude: 36.174465,
+      longitude: -86.767960
+    },
+    zoom: 13
+  }
+
   let posOptions = {timeout: 10000, enableHighAccuracy: false};
   $cordovaGeolocation
     .getCurrentPosition(posOptions)
@@ -25,6 +33,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation) {
         center: {latitude: position.coords.latitude, longitude: position.coords.longitude },
         zoom: 12
       };
+      console.log($scope.map)
     }, function(err) {
       console.log("Could not get location");
     });

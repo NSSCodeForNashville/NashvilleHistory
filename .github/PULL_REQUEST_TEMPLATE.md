@@ -13,13 +13,12 @@ A few sentences describing the overall goals of the pull request's commits.
 ## Resolves Issue Number
 
 ## Deploy Notes
-Notes regarding deployment the contained body of work.  These should note any
-db migrations, etc.
+Notes regarding deployment the contained body of work. 
 
 ```sh
 git pull --prune
 git checkout <feature_branch>
-dotnet run
+ionic serve --lab
 ```
 
 ## Steps to Test or Reproduce

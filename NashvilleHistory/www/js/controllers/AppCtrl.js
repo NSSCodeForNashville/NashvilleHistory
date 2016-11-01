@@ -42,5 +42,5 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 })
 
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+app.controller('PlaylistCtrl', function($scope, $stateParams) {
 });

@@ -57,7 +57,7 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
       }
     })
   .state('app.markers', {
-    url: '/explore/markers',
+    url: '/markers',
     views: {
       'menuContent': {
         templateUrl: 'templates/markers.html',
@@ -66,7 +66,7 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
     }
   })
   .state('app.guidedTours', {
-    url: '/explore/guided-tours',
+    url: '/guided-tours',
     views: {
       'menuContent': {
         templateUrl: 'templates/guided-tours.html',
@@ -84,7 +84,7 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
     }
   })
   .state('app.myTours', {
-    url: '/explore/my-tours',
+    url: '/my-tours',
     views: {
       'menuContent': {
         templateUrl: 'templates/my-tours.html',

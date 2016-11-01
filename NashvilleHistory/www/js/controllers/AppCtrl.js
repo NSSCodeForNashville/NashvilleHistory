@@ -40,3 +40,4 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
     }, 1000);
   };
 })
+

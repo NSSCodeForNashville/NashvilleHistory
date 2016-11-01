@@ -56,8 +56,18 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
         }
       }
     })
-  .state('app.markers', {
-    url: '/markers',
+    .state('app.markers', {
+      url: '/markers',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/markers.html',
+          controller: 'MarkersCtrl'
+        }
+      }
+    })
+
+  .state('app.single', {
+    url: '/playlists/:playlistId',
     views: {
       'menuContent': {
         templateUrl: 'templates/markers.html',

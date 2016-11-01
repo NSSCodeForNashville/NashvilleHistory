@@ -2,10 +2,9 @@
   <ion-content>
     <ui-gmap-google-map  center="map.center"
                       zoom="map.zoom"
-                      options="options"
                       >
       <!-- Map markers here -->
-<!--         <ui-gmap-markers
+        <!-- <ui-gmap-markers
               models="markers" coords="'self'" icon="'icon'" click="onClick" options="'options'" ng-cloak>
         </ui-gmap-markers>
         <ui-gmap-markers
@@ -14,7 +13,6 @@
       </ui-gmap-google-map>
     <ion-list>
       <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
-
       </ion-item>
     </ion-list>
   </ion-content>

@@ -40,38 +40,57 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
   })
-  .state('app.search', {
-    url: '/search',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/search.html'
-      }
-    }
-  })
-  .state('app.browse', {
-      url: '/browse',
+  .state('app.allPieces', {
+      url: '/all',
       views: {
         'menuContent': {
-          templateUrl: 'templates/browse.html'
+          templateUrl: 'templates/all-pieces.html',
+          controller: 'AllPiecesCtrl'
         }
       }
     })
-    .state('app.markers', {
-      url: '/markers',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/markers.html',
-          controller: 'MarkersCtrl'
-        }
-      }
-    })
-
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.markers', {
+    url: '/markers',
     views: {
       'menuContent': {
         templateUrl: 'templates/markers.html',
         controller: 'MarkersCtrl'
+      }
+    }
+  })
+  .state('app.guidedTours', {
+    url: '/guided-tours',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/guided-tours.html',
+        controller: 'ToursCtrl'
+      }
+    }
+  })
+  .state('app.contribute', {
+    url: '/contribute',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/contribute.html',
+        controller: 'ContributeCtrl'
+      }
+    }
+  })
+  .state('app.myTours', {
+    url: '/my-tours',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/my-tours.html',
+        controller: 'ToursCtrl'
+      }
+    }
+  })
+  .state('app.bookmarks', {
+    url: '/bookmarks',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/bookmarks.html',
+        controller: 'BookmarkCtrl'
       }
     }
   });

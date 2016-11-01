@@ -41,50 +41,67 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
   })
-
-  .state('app.search', {
-    url: '/search',
+  .state('app.allPieces', {
+      url: '/all',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/all-pieces.html',
+          controller: 'AllPiecesCtrl'
+        }
+      }
+    })
+  .state('app.markers', {
+    url: '/explore/markers',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/markers.html',
+        controller: 'MarkersCtrl'
       }
     }
   })
-
-  .state('app.browse', {
-      url: '/browse',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/browse.html'
-        }
-      }
-    })
-    .state('app.markers', {
-      url: '/explore/markers',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/markers.html',
-          controller: 'MarkersCtrl'
-        }
-      }
-    })
-
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.guidedTours', {
+    url: '/explore/guided-tours',
     views: {
       'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        templateUrl: 'templates/guided-tours.html',
+        controller: 'ToursCtrl'
+      }
+    }
+  })
+  .state('app.contribute', {
+    url: '/contribute',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/contribute.html',
+        controller: 'ContributeCtrl'
+      }
+    }
+  })
+  .state('app.myTours', {
+    url: '/explore/my-tours',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/my-tours.html',
+        controller: 'ToursCtrl'
+      }
+    }
+  })
+  .state('app.bookmarks', {
+    url: '/bookmarks',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/bookmarks.html',
+        controller: 'BookmarkCtrl'
       }
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/markers');
 });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('PlaylistsCtrl', function($scope, $state,$cordovaGeolocation) {
+app.controller('MarkersCtrl', function($scope, $state,$cordovaGeolocation) {
   //The map that shows up when the user opens the app. It
   //The terrain view of the map should show up
   $scope.options = {

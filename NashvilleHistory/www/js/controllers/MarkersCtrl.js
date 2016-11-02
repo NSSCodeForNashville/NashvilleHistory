@@ -1,13 +1,14 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation) {
-  //The map that shows up when the user opens the app. It
-  //The terrain view of the map should show up
-  // $scope.options = {
-  //   mapTypeId: 'terrain',
-  //   maxZoom: 18,
-  //   minZoom: 8
-  // };
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q) {
+
+  console.log(MarkerCardsFact)
+
+  $scope.HistoricalCards;
+  let HistoricalMarkers;
+  let lat;
+  let long;
+
   $scope.map = {
     center: {
       latitude: 36.1637,
@@ -25,9 +26,56 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation) {
         center: {latitude: position.coords.latitude, longitude: position.coords.longitude },
         zoom: 12
       };
+      getMarkersWithinRadius();
     }, function(err) {
       console.log("Could not get location");
     });
+
+
+    function getMarkersWithinRadius(){
+      lat = $scope.map.center.latitude.toString();
+      long = $scope.map.center.longitude.toString();
+      MarkerCardsFact.getMarkersInRadius(lat, long, "6000")
+      .then((data)=>{
+        console.log("markers in area", data);
+        HistoricalMarkers = data;
+        addDistanceToMarkers();
+      })
+    }
+
+    function addDistanceToMarkers(){
+      return $q.all(
+        HistoricalMarkers.map((marker)=>{
+          return MarkerCardsFact.getDistanceToMarker(lat, long, marker.latitude.toString(), marker.longitude.toString())
+        })
+      )
+      .then((data)=>{
+        // console.log("data about distance", data);
+        let distanceData = data.map((row)=>{
+          return {
+            distance: parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]),
+            duration: parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0])
+          }
+        })
+        distanceData.forEach((element, index)=>{
+          HistoricalMarkers[index].distance = element.distance;
+          HistoricalMarkers[index].duration = element.duration;
+        })
+        console.log("new array of markers", HistoricalMarkers)
+        sortMarkersByDistance();
+      })
+    }
+
+    function sortMarkersByDistance(){
+      $scope.HistoricalCards = sortByKey(HistoricalMarkers, "distance");
+    }
+
+    function sortByKey(array, key) {
+      return array.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+      });
+    }
 
         //     bounds: {},
         // control: {},

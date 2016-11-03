@@ -46,15 +46,15 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     function addDistanceToMarkers(){
       return $q.all(
         HistoricalMarkers.map((marker)=>{
-          return MarkerCardsFact.getDistanceToMarker(lat, long, marker.latitude.toString(), marker.longitude.toString())
+          return calculateDistanceToMarker(lat, long, marker.latitude, marker.longitude)
         })
       )
       .then((data)=>{
+        console.log("Calculated Distance",data);
         // console.log("data about distance", data);
         let distanceData = data.map((row)=>{
           return {
-            distance: parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]),
-            duration: parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0])
+            distance: parseFloat(row)
           }
         })
         distanceData.forEach((element, index)=>{
@@ -75,6 +75,30 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
+    }
+
+    function calculateDistanceToMarker(lat1, lon1, lat2, lon2){
+      var R = 6371e3; // metres
+      var φ1 = toRadians(lat1);
+      var φ2 = toRadians(lat2);
+      var Δφ = toRadians((lat2-lat1));
+      var Δλ = toRadians((lon2-lon1));
+
+      var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      var d = R * c;
+      return getMiles(d);
+    }
+
+    function toRadians(x) {
+       return x * Math.PI / 180;
+    }
+
+    // Converts meters to miles
+    function getMiles(i) {
+     return i*0.000621371192;
     }
 
         //     bounds: {},

@@ -31,7 +31,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log("Could not get location");
     });
 
-
     function getMarkersWithinRadius(){
       lat = $scope.map.center.latitude.toString();
       long = $scope.map.center.longitude.toString();
@@ -44,27 +43,14 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     }
 
     function addDistanceToMarkers(){
-      return $q.all(
-        HistoricalMarkers.map((marker)=>{
+        var distanceData = HistoricalMarkers.map((marker)=>{
           return calculateDistanceToMarker(lat, long, marker.latitude, marker.longitude)
         })
-      )
-      .then((data)=>{
-        console.log("Calculated Distance",data);
-        // console.log("data about distance", data);
-        let distanceData = data.map((row)=>{
-          return {
-            distance: parseFloat(row)
-          }
-        })
         distanceData.forEach((element, index)=>{
-          HistoricalMarkers[index].distance = element.distance;
-          HistoricalMarkers[index].duration = element.duration;
+          HistoricalMarkers[index].distance = element;
         })
-        console.log("new array of markers", HistoricalMarkers)
         sortMarkersByDistance();
-      })
-    }
+      }
 
     function sortMarkersByDistance(){
       $scope.HistoricalCards = sortByKey(HistoricalMarkers, "distance");

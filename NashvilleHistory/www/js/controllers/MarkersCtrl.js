@@ -27,6 +27,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     }
   }
   //The following code block uses the Cordova Geolocation Plugin to access the user's native Geolocation technology within his/her device and find his/her location.
+
   let posOptions = {timeout: 10000, enableHighAccuracy: false};
   $cordovaGeolocation
     .getCurrentPosition(posOptions)

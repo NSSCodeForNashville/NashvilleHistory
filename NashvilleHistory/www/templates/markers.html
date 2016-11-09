@@ -17,39 +17,24 @@
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <ion-card ng-repeat="historicalCard in HistoricalCards">
-        <ion-card-content>
-         <ion-icon name="arrow-dropdown"></ion-icon>
-          <ion-card-title>
-            <p>{{historicalCard.title}}</p>
-            </ion-card-title>
+      <div class="list card" ng-repeat="historicalCard in HistoricalCards">
+        <div class="item item-divider">
+          <p>{{historicalCard.title}}</p>
+          <i> {{historicalCard.distance}} mi.</i>
+        </div>
+        <div class="item item-text-wrap">
           <p>
-            <i> {{historicalCard.distance}} mi.</i>
+            {{historicalCard.marker_text}}
           </p>
-        <ion-row no-padding>
-          <!-- <img src="img/nin-live.png"/> -->
-        </ion-row>
-        <ion-row>
-          {{historicalCard.marker_text}}
-        </ion-row>
-        <ion-row no-padding>
-          <ion-col>
-            <button ion-button clear small color="danger" icon-left>
-              <ion-icon name='star'></ion-icon>
-              Favorite
-            </button>
-          </ion-col>
-          <ion-col text-center>
-            <button ion-button clear small color="danger" icon-left>
-              <ion-icon name="navigate"></ion-icon>
-                Start
-            </button>
-          </ion-col>
-          <ion-col text-right>
-            <ion-icon name="arrow-dropup"></ion-icon>
-          </ion-col>
-        </ion-row>
-      </ion-card-content>
-    </ion-card>
+        </div>
+        <div class="button-bar">
+          <button class="button danger">
+            <i class="icon ion-star"></i> Favorite
+          </button>
+          <button class="button danger">
+            <i class="icon ion-navigate"></i> Star
+          </button>
+        </div>
+      </div>
   </ion-content>
 </ion-view>

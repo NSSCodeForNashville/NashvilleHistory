@@ -1,8 +1,14 @@
 <ion-view view-title="Markers">
-  <ion-content>
+ <ion-content>
     <ui-gmap-google-map  center="map.center"
                       zoom="map.zoom"
                       >
+        <ui-gmap-marker
+            idKey = 'youAreHere.id'
+            coords='youAreHere.coords',
+            options = 'youAreHere.options'
+            >
+        </ui-gmap-marker>
       <!-- Map markers here -->
         <!-- <ui-gmap-markers
               models="markers" coords="'self'" icon="'icon'" click="onClick" options="'options'" ng-cloak>
@@ -11,9 +17,24 @@
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-    <ion-list>
-      <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
-      </ion-item>
-    </ion-list>
+      <div class="list card" ng-repeat="historicalCard in HistoricalCards">
+        <div class="item item-divider">
+          <p>{{historicalCard.title}}</p>
+          <i> {{historicalCard.distance}} mi.</i>
+        </div>
+        <div class="item item-text-wrap">
+          <p>
+            {{historicalCard.marker_text}}
+          </p>
+        </div>
+        <div class="button-bar">
+          <button class="button danger">
+            <i class="icon ion-star"></i> Favorite
+          </button>
+          <button class="button danger">
+            <i class="icon ion-navigate"></i> Star
+          </button>
+        </div>
+      </div>
   </ion-content>
 </ion-view>

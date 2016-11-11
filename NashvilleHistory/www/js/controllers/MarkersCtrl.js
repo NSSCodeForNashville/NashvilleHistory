@@ -5,6 +5,8 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   console.log(MarkerCardsFact)
 
   $scope.HistoricalCards;
+  $scope.markers = [];
+  $scope.showDescription = false;
   let HistoricalMarkers;
   let lat;
   let long;
@@ -62,7 +64,20 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         console.log("markers in area", data);
         HistoricalMarkers = data;
         addDistanceToMarkers();
+        addMarkersToView();
       })
+    }
+
+    function addMarkersToView() {
+      $scope.markers = HistoricalMarkers.map((marker, index)=>{
+        return {
+          id: index,
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+          name: marker.title
+        }
+      });
+      console.log($scope.markers);
     }
 
     //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.

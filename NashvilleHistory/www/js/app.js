@@ -49,8 +49,8 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ionic.native
       url: '/all',
       views: {
         'menuContent': {
-          templateUrl: 'templates/all-pieces.html',
-          controller: 'AllPiecesCtrl'
+          templateUrl: 'templates/all-places.html',
+          controller: 'AllPlacesCtrl'
         }
       }
     })

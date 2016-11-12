@@ -58,7 +58,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log("Could not get location");
     });
 
-    //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
+    //The purpose of this function is to get all of the markers in a certain radius from the user, art and historical, from the Nashville Gov API and place them in one array.
     function getMarkersWithinRadius(){
       lat = $scope.map.center.latitude.toString();
       long = $scope.map.center.longitude.toString();

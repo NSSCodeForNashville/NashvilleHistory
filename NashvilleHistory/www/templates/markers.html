@@ -1,4 +1,4 @@
-<ion-view view-title="Markers">
+<ion-view view-title="Places Near Me">
  <ion-content>
     <ui-gmap-google-map  center="map.center"
                       zoom="map.zoom"
@@ -17,20 +17,22 @@
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <div class="list card" ng-repeat="historicalCard in HistoricalCards">
+      <div class="list card" ng-repeat="markerCard in MarkerCards">
         <div class="item item-divider">
-          <p>{{historicalCard.title}}</p>
-          <p><i> {{historicalCard.distance}} mi.</i></p>
-          <button class="button danger" ng-click="showDescription = !showDescription">
+          <p> {{markerCard.title}} {{markerCard.type}} <span ng-show="markerCard.first_name"> {{markerCard.artwork}} <i> by {{markerCard.first_name}} {{markerCard.last_name}}</i></p>
+          <p><i> {{markerCard.distance}} mi. away</i></p>
+          <button class="button danger" ng-click="showDescription = !showDescription ">
             <i class="icon ion-arrow-down-b" ng-show="!showDescription"></i>
             <i class="icon ion-arrow-up-b" ng-show="showDescription"></i>
           </button>
         </div>
         <div ng-show="showDescription">
           <div class="item item-text-wrap">
+            <img src="{{markerCard.photo_link}}" alt="artwork photo" ng-show="markerCard.photo_link">
             <p>
-              {{historicalCard.marker_text}}
+              {{markerCard.marker_text}} {{markerCard.description}}
             </p>
+            <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
           </div>
           <div class="button-bar">
             <button class="button danger">

@@ -25,6 +25,7 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
 
   getAllPlaces();
 
+  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected. 
   $scope.filterArt = ()=>{
     $scope.artFilter = !$scope.artFilter;
     $scope.historicalFilter = false;

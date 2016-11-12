@@ -58,10 +58,10 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log("Could not get location");
     });
 
+    //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
     function getMarkersWithinRadius(){
       lat = $scope.map.center.latitude.toString();
       long = $scope.map.center.longitude.toString();
-      //The function called in the factory uses the Historic Markers API to find the markers within a certain radius. This function takes the latitude and longitude of the user (as strings) as well as the desired radius (in meters) as arguments.
       return $q.all(
         [MarkerCardsFact.getHistoricalMarkersInRadius(lat, long, "3500"),
         MarkerCardsFact.getArtInPublicPlacesMarkersInRadius(lat,long, "3500"),
@@ -69,7 +69,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       )
       .then((data)=>{
         AllMarkers = data[0].concat(data[1]).concat(data[2]);
-        console.log("all?", AllMarkers);
+        console.log("All markers", AllMarkers);
         addDistanceToMarkers();
         addMarkersToView();
       })
@@ -95,7 +95,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         })
       )
       .then((data)=>{
-        console.log("data about distance", data);
+        //Adding the distance and duration via car to the AllMarkers array
         let distanceData = data.map((row)=>{
           return {
             distance: parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]),
@@ -106,7 +106,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           AllMarkers[index].distance = element.distance;
           AllMarkers[index].duration = element.duration;
         })
-        console.log("new array of markers", AllMarkers)
         sortMarkersByDistance();
       })
     }

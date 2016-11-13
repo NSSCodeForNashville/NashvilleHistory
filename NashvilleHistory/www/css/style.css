@@ -6,3 +6,27 @@
 
 .scroll {
   height: 100%;
+}
+
+img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+.text-wrap {
+  white-space: normal;
+}
+
+.markerSearchBar {
+  width: 95%;
+}
+
+.hidden {
+  display: none;
+}
+
+.selectedFilter {
+  background-color: #00CDCD;
+  color: white;
+}

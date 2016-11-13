@@ -18,8 +18,11 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()">
+        <ion-item menu-close ng-click="login()" ng-show="!$parent.loggedInUser">
           Login
+        </ion-item>
+        <ion-item menu-close ng-click="logout()" ng-show="$parent.loggedInUser">
+          Logout
         </ion-item>
         <ion-item menu-close href="#/app/markers">
           Places Near Me
@@ -30,10 +33,20 @@
         <ion-item menu-close href="#/app/guided-tours">
           Guided Tours
         </ion-item>
-        <ion-item menu-close href="#/app/my-tours">
+        <ion-item ng-show="!$parent.loggedInUser">
+          <a href="#" class="logged-out" title="Please log in to access this feature">
+            My Tours
+          </a>
+        </ion-item>
+        <ion-item menu-close href="#/app/my-tours" ng-show="$parent.loggedInUser">
           My Tours
         </ion-item>
-        <ion-item menu-close href="#/app/bookmarks">
+        <ion-item ng-show="!$parent.loggedInUser">
+          <a href="#" class="logged-out" title="Please log in to access this feature">
+            Bookmarks
+          </a>
+        </ion-item>
+        <ion-item menu-close href="#/app/bookmarks" ng-show="$parent.loggedInUser">
           Bookmarks
         </ion-item>
         <ion-item menu-close href="#/app/contribute">

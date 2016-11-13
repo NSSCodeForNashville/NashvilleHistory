@@ -1,4 +1,4 @@
-<ion-view view-title="Markers">
+<ion-view view-title="Places Near Me">
  <ion-content>
     <ui-gmap-google-map  center="map.center"
                       zoom="map.zoom"
@@ -10,30 +10,41 @@
             >
         </ui-gmap-marker>
       <!-- Map markers here -->
-        <!-- <ui-gmap-markers
-              models="markers" coords="'self'" icon="'icon'" click="onClick" options="'options'" ng-cloak>
-        </ui-gmap-markers>
         <ui-gmap-markers
+              models="markers" coords="'self'" icon="'icon'" ng-cloak>
+        </ui-gmap-markers>
+        <!-- <ui-gmap-markers
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <div class="list card" ng-repeat="historicalCard in HistoricalCards">
+      <div class="list card" ng-repeat="markerCard in MarkerCards">
         <div class="item item-divider">
-          <p>{{historicalCard.title}}</p>
-          <i> {{historicalCard.distance}} mi.</i>
-        </div>
-        <div class="item item-text-wrap">
-          <p>
-            {{historicalCard.marker_text}}
-          </p>
-        </div>
-        <div class="button-bar">
-          <button class="button danger">
-            <i class="icon ion-star"></i> Favorite
+          <p> {{markerCard.title}} {{markerCard.type}} <span ng-show="markerCard.first_name"> {{markerCard.artwork}} <i> by {{markerCard.first_name}} {{markerCard.last_name}}</i></p>
+          <p><i> {{markerCard.distance}} mi. away</i></p>
+          <button class="button danger" ng-click="showDescription = !showDescription ">
+            <i class="icon ion-arrow-down-b" ng-show="!showDescription"></i>
+            <i class="icon ion-arrow-up-b" ng-show="showDescription"></i>
           </button>
-          <button class="button danger">
-            <i class="icon ion-navigate"></i> Star
-          </button>
+        </div>
+        <div ng-show="showDescription">
+          <div class="item item-text-wrap">
+            <img src="{{markerCard.photo_link}}" alt="artwork photo" ng-show="markerCard.photo_link">
+            <p>
+              {{markerCard.marker_text}} {{markerCard.description}}
+            </p>
+            <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
+          </div>
+          <div class="button-bar">
+            <button class="button danger">
+              <i class="icon ion-bookmark"></i> Bookmark
+            </button>
+            <button class="button danger">
+              <i class="icon ion-plus"></i> Add to Route
+            </button>
+            <button class="button danger">
+              <i class="icon ion-navigate"></i> Go
+            </button>
+          </div>
         </div>
       </div>
   </ion-content>

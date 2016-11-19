@@ -44,10 +44,10 @@
             <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
           </div>
           <div class="button-bar">
-            <button class="button danger">
+            <button class="button danger tooltip" ng-disabled ="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard)">
               <i class="icon ion-bookmark"></i> Bookmark
             </button>
-            <button class="button danger">
+            <button class="button danger tooltip" ng-disabled ="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
               <i class="icon ion-plus"></i> Add to Route
             </button>
             <button class="button danger">

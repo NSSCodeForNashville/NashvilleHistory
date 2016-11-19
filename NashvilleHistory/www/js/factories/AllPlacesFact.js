@@ -41,17 +41,5 @@ app.factory("AllPlacesFact", ($q, $http, KeyGetter)=>{
     });
   }
 
-  // let getDistanceToMarker = (lat, long, markerLat, markerLong)=>{
-  //   return $q((resolve, reject)=>{
-  //     $http.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${markerLat}%2C${markerLong}&key=${GoogleAppToken}`)
-  //     .success((data)=>{
-  //       resolve(data);
-  //     })
-  //     .error((err)=>{
-  //       reject(err);
-  //     })
-  //   });
-  // }
-
   return {getAllHistoricalMarkers, getAllArtInPublicPlacesMarkers, getAllMetroPublicArtMarkers};
 });

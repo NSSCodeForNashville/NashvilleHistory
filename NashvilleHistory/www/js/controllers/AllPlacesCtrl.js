@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
+app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, BookmarkFact){
 
   let AllPlaces;
   let HistoricalMarkers;
@@ -9,6 +9,17 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
   $scope.artFilter = false;
   $scope.historicalFilter = false;
   $scope.civilWarFilter = false;
+  // Auto-Login Handler
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      $scope.loggedInUser = user;
+      $scope.userLoggedIn = true;
+    }
+    else {
+      $scope.loggedInUser = null;
+      $scope.userLoggedIn = false;
+    }
+  });
   //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
   function getAllPlaces(){
     return $q.all(
@@ -72,6 +83,17 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     } else {
       $scope.MarkerCards = AllPlaces;
     }
+  }
+
+  $scope.AddToBookmarks = (marker)=>{
+    BookmarkFact.addBookmark(marker)
+    .then((success)=>{
+      console.log("success!", success);
+    })
+  }
+
+  $scope.AddToRoute = (marker)=>{
+    console.log("clicked add to route");
   }
 
 });

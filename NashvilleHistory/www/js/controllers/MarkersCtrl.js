@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q, BookmarkFact) {
 
   console.log(MarkerCardsFact)
 
@@ -10,7 +10,16 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   let AllMarkers;
   let lat;
   let long;
-
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      $scope.loggedInUser = user;
+      $scope.userLoggedIn = true;
+    }
+    else {
+      $scope.loggedInUser = null;
+      $scope.userLoggedIn = false;
+    }
+  });
   //The map needs to be set to something before the location of the user is found by the phone otherwise there is an error.
   $scope.map = {
     center: {
@@ -121,6 +130,18 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
+    }
+
+    $scope.AddToBookmarks = (marker)=>{
+      console.log("marker clicked", marker);
+      BookmarkFact.addBookmark(marker)
+      .then((success)=>{
+        console.log("success!", success);
+      })
+    }
+
+    $scope.AddToRoute = (marker)=>{
+      console.log("clicked add to route");
     }
 
   //The following code block watches the user's location and updates the center of the map as the user moves.

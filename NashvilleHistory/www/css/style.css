@@ -31,7 +31,13 @@ img {
   color: white;
 }
 
-a.logged-out {
+.logged-out {
   text-decoration: none;
   color: lightgrey;
 }
+
+.logged-out:hover {
+  text-decoration: none;
+  color: lightgrey;
+}
+

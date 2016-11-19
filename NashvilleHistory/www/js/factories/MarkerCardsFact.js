@@ -61,6 +61,9 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
     });
   }
 
+  // Haversine formula, source: http://www.movable-type.co.uk/scripts/latlong.html
+  // where  φ is latitude, λ is longitude, R is earth’s radius (mean radius = 6,371km);
+  // note that angles need to be in radians to pass to trig functions
   function calculateDistanceToMarker(lat1, lon1, lat2, lon2){
     var R = 6371e3; // metres
     var φ1 = toRadians(lat1);

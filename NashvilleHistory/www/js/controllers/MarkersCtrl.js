@@ -97,15 +97,15 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       .then((data)=>{
         console.log("distance data from Google", data)
         //Adding the distance and duration via car to the AllMarkers array
-        let distanceData = data.map((row)=>{
-          return {
-            distance: parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]),
-            duration: parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0])
+        let distanceData = data.forEach((row, index)=>{
+          // If Google API returned the data
+          if (row.rows) {
+            AllMarkers[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
+            AllMarkers[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
+          // Else use the manual calculation
+          } else {
+            AllMarkers[index].distance = row;
           }
-        })
-        distanceData.forEach((element, index)=>{
-          AllMarkers[index].distance = element.distance;
-          AllMarkers[index].duration = element.duration;
         })
         sortMarkersByDistance();
       })

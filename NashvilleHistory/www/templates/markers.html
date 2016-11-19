@@ -11,13 +11,13 @@
         </ui-gmap-marker>
       <!-- Map markers here -->
         <ui-gmap-markers
-              models="markers" coords="'self'" icon="'icon'" ng-cloak>
+              models="markers" coords="'self'" icon="'icon'" options="'options'" click="markerClick" ng-cloak>
         </ui-gmap-markers>
         <!-- <ui-gmap-markers
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <div class="list card" ng-repeat="markerCard in MarkerCards">
+      <div class="list card" ng-repeat="markerCard in MarkerCards" ng-show="!markerClicked">
         <div class="item item-divider">
           <div class="row">
             <div class="col-75">
@@ -47,6 +47,45 @@
               <i class="icon ion-bookmark"></i> Bookmark
             </button>
             <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
+              <i class="icon ion-plus"></i> Add to Route
+            </button>
+            <button class="button danger">
+              <i class="icon ion-navigate"></i> Go
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+      <!-- Individual Marker Card when a Marker is clicked -->
+      <div class="list-card" ng-show="markerClicked">
+        <div class="item item-divider">
+          <div class="row">
+            <div class="col-75">
+              <i class="fa fa-university" ng-show="activeMarker.marker_text"></i>
+              <i class="fa fa-flag" ng-show="activeMarker.civil_war_site === 'X'"></i>
+              <i class="fa fa-paint-brush" ng-show="activeMarker.description || activeMarker.artwork || activeMarker.medium"></i>
+              <p class="text-wrap"> {{activeMarker.title}} {{activeMarker.type}} <span ng-show="activeMarker.first_name"> {{activeMarker.artwork}} <i> by {{activeMarker.first_name}} {{activeMarker.last_name}}</i></p>
+              <p><i> {{activeMarker.distance}} mi. away</i></span></p>
+            </div>
+            <div class="col">
+              <button class="button danger" ng-click="closeActiveMarker()">
+                <i class="icon ion-close"></i>
+              </button>
+            </div>
+          </div>
+        <div>
+          <div class="item item-text-wrap">
+            <img src="{{activeMarker.photo_link}}" alt="artwork photo" ng-show="activeMarker.photo_link">
+            <p>
+              {{activeMarker.marker_text}} {{activeMarker.description}}
+            </p>
+            <p ng-show="activeMarker.medium"> MEDIUM: {{activeMarker.medium}} </p>
+          </div>
+          <div class="button-bar">
+            <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(activeMarker)">
+              <i class="icon ion-bookmark"></i> Bookmark
+            </button>
+            <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(activeMarker)">
               <i class="icon ion-plus"></i> Add to Route
             </button>
             <button class="button danger">

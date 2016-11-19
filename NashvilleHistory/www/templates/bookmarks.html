@@ -2,7 +2,7 @@
   <ion-content>
     <h1>Bookmarks</h1>
     <!-- Add filter buttons here -->
-    <div class="list card" ng-repeat="bookmark in Bookmarks | filter: searchText" >
+    <div class="list card" ng-repeat="bookmark in Bookmarks" >
       <div class="item item-divider">
         <div class="row">
           <div class="col-75">
@@ -34,7 +34,7 @@
             <button class="button danger">
               <i class="icon ion-navigate"></i> Go
             </button>
-            <button class="button danger tooltip" ng-disabled ="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(bookmark)">
+            <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)">
               <i class="icon ion-close"></i> Remove Bookmark
             </button>
           </div>

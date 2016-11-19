@@ -7,6 +7,9 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   $scope.HistoricalCards;
   $scope.markers = [];
   $scope.showDescription = false;
+  $scope.markerClicked = false;
+  $scope.activeMarker = null;
+  let markerId = 0;
   let AllMarkers;
   let lat;
   let long;
@@ -47,7 +50,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log(position);
       $scope.map = {
         center: {latitude: position.coords.latitude, longitude: position.coords.longitude },
-        zoom: 12
+        zoom: 13
       };
       $scope.youAreHere = {
         id: 0,
@@ -80,7 +83,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         AllMarkers = data[0].concat(data[1]).concat(data[2]);
         console.log("All markers", AllMarkers);
         addDistanceToMarkers();
-        addMarkersToView();
       })
     }
 
@@ -90,7 +92,18 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           id: index,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          name: marker.title
+          title: marker.title,
+          number: marker.number,
+          marker_text: marker.marker_text,
+          description: marker.description,
+          type: marker.type,
+          artwork: marker.artwork,
+          medium: marker.medium,
+          first_name: marker.first_name,
+          last_name: marker.last_name,
+          distance: marker.distance,
+          photo_link: marker.photo_link,
+          icon: "../img/aquaMarker.png"
         }
       });
       console.log($scope.markers);
@@ -116,6 +129,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           AllMarkers[index].distance = element.distance;
           AllMarkers[index].duration = element.duration;
           sortMarkersByDistance();
+          addMarkersToView();
         })
       })
       .catch((error)=>{
@@ -126,6 +140,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         distanceData.forEach((element, index)=>{
           AllMarkers[index].distance = element;
           sortMarkersByDistance();
+          addMarkersToView();
         })
       })
     }
@@ -166,17 +181,45 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
      return i*0.000621371192;
     }
 
-    $scope.AddToBookmarks = (marker)=>{
-      console.log("marker clicked", marker);
-      BookmarkFact.addBookmark(marker)
-      .then((data)=>{
-        console.log("success!", data);
+    function getBookmarkedMarkers = (){
+      BookmarkFact.getAllBookmarks()
+      .then((bookmarks)=>{
+        console.log(bookmarks);
       })
+    }
+
+    $scope.AddToBookmarks = (marker)=>{
+      marker.uid = 
+      BookmarkFact.addBookmark(marker)
     }
 
     $scope.AddToRoute = (marker)=>{
       console.log("clicked add to route");
+      /**TODO: Add the marker to a route **/
     }
+
+    $scope.markerClick = (instance, event, marker)=>{
+      $scope.markers[marker.id].icon = '../img/BigAquaMarker2.png';
+      if (marker.id === markerId){
+        // $scope.markers[marker.id].icon = '../img/aquaMarker.png';
+        $scope.markerClicked = !$scope.markerClicked;
+      }
+      else {
+        $scope.markers[markerId].icon = '../img/aquaMarker.png';
+        markerId = marker.id;
+        $scope.markerClicked = true;
+      }
+      $scope.activeMarker = marker;
+      $scope.$apply();
+    }
+
+    $scope.closeActiveMarker = ()=>{
+      console.log("closing");
+      $scope.markers[markerId].icon = '../img/aquaMarker.png';
+      $scope.markerClicked = false;
+    }
+
+
 
   //The following code block watches the user's location and updates the center of the map as the user moves.
   // var watchOptions = { timeout : 5000, enableHighAccuracy: false };

@@ -116,6 +116,12 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       $scope.MarkerCards = sortByKey(AllMarkers, "distance");
     }
 
+    function sortByKey(array, key) {
+      return array.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+      });
+    }
 
   //The following code block watches the user's location and updates the center of the map as the user moves.
   // var watchOptions = { timeout : 5000, enableHighAccuracy: false };

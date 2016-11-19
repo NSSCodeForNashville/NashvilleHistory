@@ -97,40 +97,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     }
 
     //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
-    // function addDistanceToMarkers(){
-    //   return $q.all(
-    //     AllMarkers.map((marker)=>{
-    //       return MarkerCardsFact.getDistanceToMarker(lat, long, marker.latitude.toString(), marker.longitude.toString())
-    //     })
-    //   )
-    //   .then((data)=>{
-    //     console.log("distance data from Google", data)
-    //     //Adding the distance and duration via car to the AllMarkers array
-    //     let distanceData = data.map((row)=>{
-    //       return {
-    //         distance: parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]),
-    //         duration: parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0])
-    //       }
-    //     })
-    //     distanceData.forEach((element, index)=>{
-    //       AllMarkers[index].distance = element.distance;
-    //       AllMarkers[index].duration = element.duration;
-    //     })
-    //     sortMarkersByDistance();
-    //   })
-    // }
-
-    // //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
-    // function sortMarkersByDistance(){
-    //   $scope.MarkerCards = sortByKey(AllMarkers, "distance");
-    // }
-
-    // function sortByKey(array, key) {
-    //   return array.sort(function(a, b) {
-    //     var x = a[key]; var y = b[key];
-    //     return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    //   });
-    // }
     function addDistanceToMarkers(){
       return $q.all(
         AllMarkers.map((marker)=>{
@@ -203,8 +169,8 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     $scope.AddToBookmarks = (marker)=>{
       console.log("marker clicked", marker);
       BookmarkFact.addBookmark(marker)
-      .then((success)=>{
-        console.log("success!", success);
+      .then((data)=>{
+        console.log("success!", data);
       })
     }
 

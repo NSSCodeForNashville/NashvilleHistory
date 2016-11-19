@@ -9,6 +9,9 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
+  // Current Firebase Logged-In User Object
+  $scope.loggedInUser = null;
+
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -43,6 +46,22 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
     });
   }
 
+  // Auto-Login Handler
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      $scope.loggedInUser = user;
+    }
+  });
+
+  // Logout
+  $scope.logout = function() {
+    firebase.auth().signOut()
+      .then(function(data){
+        console.log("success log out", data)
+        $scope.loggedInUser = null;
+      })
+  }
+
   // Google Login
   $scope.google = function() {
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -51,8 +70,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
       // This gives you a Google Access Token. You can use it to access the Google API.
       var token = result.credential.accessToken;
       // The signed-in user info.
-      var user = result.user;
-      console.log(`Logged In User: ${user}`);
+      $scope.loggedInUser = result.user;
     }).catch(function(error) {
       console.error(`Error with Registration, ${error.code}: ${error.message}`);
       // The email of the user's account used.
@@ -64,15 +82,14 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
   // Firebase Login with Email and Password
   $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
     firebase.auth().signInWithEmailAndPassword($scope.loginData.username, $scope.loginData.password)
     .then(function(data) {
-      console.log(`Logged In User: ${data}`);
+      $scope.loggedInUser = data;
       $scope.modal.hide();
       $scope.modal.remove();
     })
     .catch(function(error) {
-      console.error(`Error with Registration, ${error.code}: ${error.message}`);
+      console.error(`Error with Login, ${error.code}: ${error.message}`);
     });
   };
 
@@ -81,10 +98,9 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
     if ($scope.loginData.password !== $scope.loginData.passwordConfirmation) {
       console.error("Passwords do not match.")
     } else {
-      console.log('Doing registration', $scope.loginData);
       firebase.auth().createUserWithEmailAndPassword($scope.loginData.username, $scope.loginData.password)
       .then(function(data) {
-        console.log(`Logged In User: ${data}`);
+        $scope.loggedInUser = data;
         $scope.modal.hide();
         $scope.modal.remove();
       })

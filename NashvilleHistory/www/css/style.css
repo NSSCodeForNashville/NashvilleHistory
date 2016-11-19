@@ -30,3 +30,8 @@ img {
   background-color: #00CDCD;
   color: white;
 }
+
+a.logged-out {
+  text-decoration: none;
+  color: lightgrey;
+}

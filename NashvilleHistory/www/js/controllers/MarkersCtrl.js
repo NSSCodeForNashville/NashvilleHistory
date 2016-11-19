@@ -95,7 +95,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         })
       )
       .then((data)=>{
-        console.log(data);
+        console.log("distance data from Google", data)
         //Adding the distance and duration via car to the AllMarkers array
         let distanceData = data.forEach((row, index)=>{
           // If Google API returned the data

@@ -123,6 +123,31 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       });
     }
 
+    function calculateDistanceToMarker(lat1, lon1, lat2, lon2){
+      var R = 6371e3; // metres
+      var φ1 = toRadians(lat1);
+      var φ2 = toRadians(lat2);
+      var Δφ = toRadians((lat2-lat1));
+      var Δλ = toRadians((lon2-lon1));
+
+      var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      var d = R * c;
+      return getMiles(d).toPrecision(2);
+    }
+
+    function toRadians(x) {
+       return x * Math.PI / 180;
+    }
+
+    // Converts meters to miles
+    function getMiles(i) {
+     return i*0.000621371192;
+    }
+
+
   //The following code block watches the user's location and updates the center of the map as the user moves.
   // var watchOptions = { timeout : 5000, enableHighAccuracy: false };
 

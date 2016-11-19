@@ -1,49 +1,59 @@
-<ion-view view-title="Markers">
-  <ion-content>
+<ion-view view-title="Places Near Me">
+ <ion-content>
     <ui-gmap-google-map  center="map.center"
                       zoom="map.zoom"
                       >
+        <ui-gmap-marker
+            idKey = 'youAreHere.id'
+            coords='youAreHere.coords',
+            options = 'youAreHere.options'
+            >
+        </ui-gmap-marker>
       <!-- Map markers here -->
-        <!-- <ui-gmap-markers
-              models="markers" coords="'self'" icon="'icon'" click="onClick" options="'options'" ng-cloak>
-        </ui-gmap-markers>
         <ui-gmap-markers
+              models="markers" coords="'self'" icon="'icon'" ng-cloak>
+        </ui-gmap-markers>
+        <!-- <ui-gmap-markers
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <ion-card ng-repeat="historicalCard in HistoricalCards">
-        <ion-card-content>
-         <ion-icon name="arrow-dropdown"></ion-icon>
-          <ion-card-title>
-            <p>{{historicalCard.title}}</p>
-            </ion-card-title>
-          <p>
-            <i> {{historicalCard.distance}} mi.</i>
-          </p>
-        </ion-card-content>
-        <ion-row no-padding>
-          <!-- <img src="img/nin-live.png"/> -->
-        </ion-row>
-        <ion-row>
-          {{historicalCard.marker_text}}
-        </ion-row>
-        <ion-row no-padding>
-          <ion-col>
-            <button ion-button clear small color="danger" icon-left>
-              <ion-icon name='star'></ion-icon>
-              Favorite
+      <div class="list card" ng-repeat="markerCard in MarkerCards">
+        <div class="item item-divider">
+          <div class="row">
+            <div class="col-75">
+              <i class="fa fa-university" ng-show="markerCard.marker_text"></i>
+              <i class="fa fa-flag" ng-show="markerCard.civil_war_site === 'X'"></i>
+              <i class="fa fa-paint-brush" ng-show="markerCard.description || markerCard.artwork || markerCard.medium"></i>
+              <p class="text-wrap"> {{markerCard.title}} {{markerCard.type}} <span ng-show="markerCard.first_name"> {{markerCard.artwork}} <i> by {{markerCard.first_name}} {{markerCard.last_name}}</i></p>
+              <p><i> {{markerCard.distance}} mi. away</i></span></p>
+            </div>
+            <div class="col">
+              <button class="button danger" ng-click="showDescription = !showDescription ">
+                <i class="icon ion-arrow-down-b" ng-show="!showDescription"></i>
+                <i class="icon ion-arrow-up-b" ng-show="showDescription"></i>
+              </button>
+            </div>
+          </div>
+        <div ng-show="showDescription">
+          <div class="item item-text-wrap">
+            <img src="{{markerCard.photo_link}}" alt="artwork photo" ng-show="markerCard.photo_link">
+            <p>
+              {{markerCard.marker_text}} {{markerCard.description}}
+            </p>
+            <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
+          </div>
+          <div class="button-bar">
+            <button class="button danger">
+              <i class="icon ion-bookmark"></i> Bookmark
             </button>
-          </ion-col>
-          <ion-col text-center>
-            <button ion-button clear small color="danger" icon-left>
-              <ion-icon name="navigate"></ion-icon>
-                Start
+            <button class="button danger">
+              <i class="icon ion-plus"></i> Add to Route
             </button>
-          </ion-col>
-          <ion-col text-right>
-            <ion-icon name="arrow-dropup"></ion-icon>
-          </ion-col>
-        </ion-row>
-    </ion-card>
+            <button class="button danger">
+              <i class="icon ion-navigate"></i> Go
+            </button>
+          </div>
+        </div>
+      </div>
   </ion-content>
 </ion-view>

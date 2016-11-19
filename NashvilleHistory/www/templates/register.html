@@ -1,12 +1,12 @@
 <ion-modal-view>
   <ion-header-bar>
-    <h1 class="title">Login</h1>
+    <h1 class="title">Register</h1>
     <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
     </div>
   </ion-header-bar>
   <ion-content>
-    <form ng-submit="doLogin()">
+    <form ng-submit="doRegistration()">
       <div class="list">
         <label class="item item-input">
           <span class="input-label">Email</span>
@@ -16,16 +16,14 @@
           <span class="input-label">Password</span>
           <input type="password" ng-model="loginData.password">
         </label>
+        <label class="item item-input">
+          <span class="input-label">Confirm Password</span>
+          <input type="password" ng-model="loginData.passwordConfirmation">
+        </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
+          <button class="button button-block button-balanced" type="submit">Register</button>
         </label>
       </div>
     </form>
-        <label class="item">
-          <button class="button button-block button-balanced" type="button" ng-click="register()">Register</button>
-        </label>
-        <label class="item">
-          <button class="button button-block button-calm" type="button" ng-click="google()">Log in/Register with Google</button>
-        </label>
   </ion-content>
 </ion-modal-view>

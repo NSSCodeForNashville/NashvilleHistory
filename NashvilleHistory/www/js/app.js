@@ -1,19 +1,5 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.controllers' is found in controllers.js
-var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
-.constant("FirebaseURL", "https://www.gstatic.com/firebasejs/3.5.2/firebase.js")
-
-.config(function(uiGmapGoogleMapApiProvider, KeyGetter) {
-  uiGmapGoogleMapApiProvider.configure({
-      key: KeyGetter.googleMapsKey,
-      v: '3.24',
-      libraries: 'weather,geometry,visualization,places'
-  })
-})
+// Configure app-wide services here
+var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ionic.native'])
 
 .run(function($ionicPlatform, KeyGetter) {
   $ionicPlatform.ready(function() {
@@ -36,11 +22,23 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
     databaseURL: creds.databaseURL
   }
   firebase.initializeApp(authConfig);
+  // Create a Firebase reference where GeoFire will store its information
+  var firebaseRef = firebase.database().ref();
+
+  // Create a GeoFire index
+  var geoFire = new GeoFire(firebaseRef);
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+.config(function($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider, KeyGetter) {
+  // Angular Maps Configuration
+  uiGmapGoogleMapApiProvider.configure({
+      key: KeyGetter.googleMapsKey,
+      v: '3.24',
+      libraries: 'weather,geometry,visualization,places'
+  })
 
+  // ROUTING (works like $routeProvider)
+  $stateProvider
   .state('app', {
     url: '/app',
     abstract: true,
@@ -51,8 +49,8 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ngCordova'])
       url: '/all',
       views: {
         'menuContent': {
-          templateUrl: 'templates/all-pieces.html',
-          controller: 'AllPiecesCtrl'
+          templateUrl: 'templates/all-places.html',
+          controller: 'AllPlacesCtrl'
         }
       }
     })

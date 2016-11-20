@@ -18,9 +18,11 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
+        <!-- If not logged in -->
         <ion-item menu-close ng-click="login()" ng-show="!$parent.loggedInUser">
           Login
         </ion-item>
+        <!-- If logged in -->
         <ion-item menu-close ng-click="logout()" ng-show="$parent.loggedInUser">
           Logout
         </ion-item>
@@ -33,19 +35,23 @@
         <ion-item menu-close href="#/app/guided-tours">
           Guided Tours
         </ion-item>
+        <!-- If not logged in -->
         <ion-item ng-show="!$parent.loggedInUser">
-          <a href="#" class="logged-out" title="Please log in to access this feature">
+          <a href="#" class="logged-out tooltip" title="Please log in to access this feature" animation="fade">
             My Tours
           </a>
         </ion-item>
+        <!-- If logged in -->
         <ion-item menu-close href="#/app/my-tours" ng-show="$parent.loggedInUser">
           My Tours
         </ion-item>
+        <!-- If not logged in -->
         <ion-item ng-show="!$parent.loggedInUser">
-          <a href="#" class="logged-out" title="Please log in to access this feature">
+          <a href="#" class="logged-out tooltip" title="Please log in to access this feature" animation="fade">
             Bookmarks
           </a>
         </ion-item>
+        <!-- If logged in -->
         <ion-item menu-close href="#/app/bookmarks" ng-show="$parent.loggedInUser">
           Bookmarks
         </ion-item>

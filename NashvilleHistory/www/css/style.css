@@ -31,7 +31,8 @@ img {
   color: white;
 }
 
-a.logged-out {
+a.logged-out, button.logged-out, button.logged-out:hover, button.logged-out:active {
   text-decoration: none;
   color: lightgrey;
+  border: none;
 }

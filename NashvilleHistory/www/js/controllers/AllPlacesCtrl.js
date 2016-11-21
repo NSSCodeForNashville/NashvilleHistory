@@ -1,11 +1,12 @@
 'use strict';
 
-app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, BookmarkFact){
+app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, BookmarkFact, AuthFact){
 
   let AllPlaces;
   let HistoricalMarkers;
   let ArtMarkers;
   let CivilWarMarkers;
+  let AllMarkers;
   $scope.artFilter = false;
   $scope.historicalFilter = false;
   $scope.civilWarFilter = false;
@@ -30,13 +31,29 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     .then((data)=>{
       AllPlaces = data[0].concat(data[1]).concat(data[2]);
       console.log("All places", AllPlaces);
-      $scope.MarkerCards = AllPlaces;
+      AllMarkers = AllPlaces
+      areMarkersBookmarked();
     })
   }
 
   getAllPlaces();
 
-  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected. 
+  function areMarkersBookmarked (){
+      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          AllMarkers.forEach((marker, index)=>{
+            if (bookmarks[key].latitude === marker.latitude && bookmarks[key].longitude === marker.longitude){
+              AllMarkers[index].isBookmarked = true;
+            }
+          })
+        })
+      })
+      $scope.MarkerCards = AllMarkers;
+    }
+
+  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected.
   $scope.filterArt = ()=>{
     $scope.artFilter = !$scope.artFilter;
     $scope.historicalFilter = false;
@@ -85,11 +102,10 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     }
   }
 
-  $scope.AddToBookmarks = (marker)=>{
-    BookmarkFact.addBookmark(marker)
-    .then((success)=>{
-      console.log("success!", success);
-    })
+  $scope.AddToBookmarks = (marker, index)=>{
+      marker.uid = AuthFact.getUserId();
+      $scope.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker)
   }
 
   $scope.AddToRoute = (marker)=>{

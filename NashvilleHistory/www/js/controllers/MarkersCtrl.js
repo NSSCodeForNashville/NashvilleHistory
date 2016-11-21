@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q, BookmarkFact) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q, BookmarkFact, AuthFact) {
 
   console.log(MarkerCardsFact)
 
@@ -81,11 +81,11 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       )
       .then((data)=>{
         AllMarkers = data[0].concat(data[1]).concat(data[2]);
-        console.log("All markers", AllMarkers);
         addDistanceToMarkers();
       })
     }
 
+    //All of these properties need to be added to avoid calling the API when a marker is clicked and more information about the marker needs to be displayed below the map.
     function addMarkersToView() {
       $scope.markers = AllMarkers.map((marker, index)=>{
         return {
@@ -120,19 +120,14 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         console.log("distance data from Google", data)
         //Adding the distance and duration via car to the AllMarkers array
         let distanceData = data.forEach((row, index)=>{
-          // If Google API returned the data
-          if (row.rows) {
             AllMarkers[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
             AllMarkers[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
-          // Else use the manual calculation
-          } else {
-            AllMarkers[index].distance = row;
-          }
         })
         distanceData.forEach((element, index)=>{
           AllMarkers[index].distance = element.distance;
           AllMarkers[index].duration = element.duration;
           sortMarkersByDistance();
+          areMarkersBookmarked();
           addMarkersToView();
         })
       })
@@ -143,9 +138,9 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         })
         distanceData.forEach((element, index)=>{
           AllMarkers[index].distance = element;
-          sortMarkersByDistance();
         })
         sortMarkersByDistance();
+        areMarkersBookmarked();
         addMarkersToView();
       })
     }
@@ -186,16 +181,25 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
      return i*0.000621371192;
     }
 
-    function getBookmarkedMarkers = (){
-      BookmarkFact.getAllBookmarks()
+    //TODO: Get the bookmarked markers and make sure the user cannot add a marker twice to his/her bookmarks
+    function areMarkersBookmarked (){
+      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
       .then((bookmarks)=>{
-        console.log(bookmarks);
-      })
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          AllMarkers.forEach((marker, index)=>{
+            if (bookmarks[key].latitude === marker.latitude && bookmarks[key].longitude === marker.longitude){
+              AllMarkers[index].isBookmarked = true;
+            }
+          });
+        });
+      });
     }
 
-    $scope.AddToBookmarks = (marker)=>{
-      marker.uid = 
-      BookmarkFact.addBookmark(marker)
+    $scope.AddToBookmarks = (marker, index)=>{
+      marker.uid = AuthFact.getUserId();
+      $scope.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker);
     }
 
     $scope.AddToRoute = (marker)=>{
@@ -203,10 +207,10 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       /**TODO: Add the marker to a route **/
     }
 
+    //If a marker is clicked the marker should enlarge - become the BigAquaMarker - and the description of that marker should show up underneath the map. If another marker is clicked, the previously chosen marker will go back to normal size and the selected marker will enlarge.
     $scope.markerClick = (instance, event, marker)=>{
       $scope.markers[marker.id].icon = '../img/BigAquaMarker2.png';
       if (marker.id === markerId){
-        // $scope.markers[marker.id].icon = '../img/aquaMarker.png';
         $scope.markerClicked = !$scope.markerClicked;
       }
       else {
@@ -215,15 +219,12 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         $scope.markerClicked = true;
       }
       $scope.activeMarker = marker;
-      $scope.$apply();
     }
-
+    //This will close the description of the active marker and show the list of cards as well as change the chosen marker back to a normal size.
     $scope.closeActiveMarker = ()=>{
-      console.log("closing");
       $scope.markers[markerId].icon = '../img/aquaMarker.png';
       $scope.markerClicked = false;
     }
-
 
 
   //The following code block watches the user's location and updates the center of the map as the user moves.

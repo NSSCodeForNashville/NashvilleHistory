@@ -43,16 +43,24 @@
             </p>
             <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
           </div>
-          <div class="button-bar">
-            <button class="button danger tooltip" ng-disabled ="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard)">
-              <i class="icon ion-bookmark"></i> Bookmark
-            </button>
-            <button class="button danger tooltip" ng-disabled ="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
-              <i class="icon ion-plus"></i> Add to Route
-            </button>
-            <button class="button danger">
-              <i class="icon ion-navigate"></i> Go
-            </button>
+          <div class="button-bar row">
+            <div class="col-33">
+              <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
+                <i class="icon ion-bookmark"></i> Bookmark
+              </button>
+              <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+            </div>
+            <div class="col-33">
+              <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
+                <i class="icon ion-plus"></i> Add to Route
+              </button>
+            </div>
+            <div class="col-33">
+              <button class="button danger">
+                <i class="icon ion-navigate"></i> Go
+              </button>
+            </div>
+          </div>
           </div>
         </div>
       </div>

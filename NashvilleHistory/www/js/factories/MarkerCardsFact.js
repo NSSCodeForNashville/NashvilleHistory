@@ -55,17 +55,35 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
       }
       if (marker.title){
         newMarker.markerType = "historic";
-        newMarker.title = marker.title;
+        newMarker.title = titleFormat(marker.title);
       } else if (marker.artwork) {
         newMarker.markerType = "metroArt";
-        newMarker.title = marker.artwork;
+        newMarker.title = titleFormat(marker.artwork);
       } else {
         newMarker.markerType = "publicArt";
-        newMarker.title = marker.type;
+        newMarker.title = titleFormat(marker.type);
       }
       return newMarker;
     })
   }
+
+  // Normalizes all marker titles. The beginning of each word will be capitalized
+  const titleFormat = (string) => {
+    let str = string.toLowerCase().split(' ');
+    for(var i = 0; i < str.length; i++){
+      str[i] = str[i].split('');
+      // Checks to see whether the first char of a word is a parentheses or bracket
+      if (string[i][0] != "(" && string[i][0] != "[" )
+      {
+        str[i][0] = str[i][0].toUpperCase();
+      } else {
+        string[i][1] = str[i][1].toUpperCase();
+      }
+      str[i] = str[i].join('');
+    }
+    return str.join(' ');
+  }
+
   // Haversine formula, source: http://www.movable-type.co.uk/scripts/latlong.html
   // where  φ is latitude, λ is longitude, R is earth’s radius (mean radius = 6,371km);
   // note that angles need to be in radians to pass to trig functions

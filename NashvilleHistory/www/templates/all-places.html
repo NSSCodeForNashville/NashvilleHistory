@@ -19,14 +19,13 @@
       </div> -->
     <!-- Add filter buttons here -->
     <div class="list card" ng-repeat="markerCard in MarkerCards | filter: searchText" >
-      <div class="item item-divider" ng-class="{historicalMarker: markerCard.marker_text}">
+      <div class="item item-divider" ng-class="{historicalMarker: markerCard.description}">
         <div class="row">
           <div class="col-75">
-           <i class="fa fa-university" ng-show="markerCard.marker_text"></i>
-           <i class="fa fa-flag" ng-show="markerCard.civil_war_site === 'X'"></i>
-           <i class="fa fa-paint-brush" ng-show="markerCard.description || markerCard.artwork || markerCard.medium"></i>
-            <span> {{markerCard.title}} {{markerCard.type}} <span ng-show="markerCard.first_name"> {{markerCard.artwork}} <i> by {{markerCard.first_name}} {{markerCard.last_name}}</i></span></span>
-            <!-- <p><i> {{markerCard.distance}} mi. away</i></p> -->
+           <i class="fa fa-university" ng-show="markerCard.markerType == 'historic'"></i>
+           <i class="fa fa-flag" ng-show="markerCard.civil_war_site"></i>
+           <i class="fa fa-paint-brush" ng-show="markerCard.markerType == 'metroArt' || markerCard.markerType == 'publicArt'"></i>
+            <span> {{markerCard.title}}<span ng-show="markerCard.artistName"> by {{markerCard.artistName}}</i></span></span>
           </div>
           <div class="col">
             <button class="button danger" ng-click="showDescription = !showDescription ">
@@ -37,9 +36,9 @@
         </div>
         <div ng-show="showDescription">
           <div class="item item-text-wrap" ng-show="markerCard.marker_text || markerCard.description || markerCard.medium">
-            <img src="{{markerCard.photo_link}}" alt="artwork photo" ng-show="markerCard.photo_link">
+            <img src="{{markerCard.image}}" alt="artwork photo" ng-show="markerCard.image">
             <p>
-              {{markerCard.marker_text}} {{markerCard.description}}
+              {{markerCard.description}}
             </p>
             <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
           </div>

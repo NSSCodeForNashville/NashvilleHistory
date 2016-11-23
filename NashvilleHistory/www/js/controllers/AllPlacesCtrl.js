@@ -29,9 +29,7 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
       AllPlacesFact.getAllMetroPublicArtMarkers()]
     )
     .then((data)=>{
-      AllPlaces = data[0].concat(data[1]).concat(data[2]);
-      console.log("All places", AllPlaces);
-      AllMarkers = AllPlaces
+      AllMarkers = data[0].concat(data[1]).concat(data[2]);
       areMarkersBookmarked();
     })
   }
@@ -59,14 +57,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     $scope.historicalFilter = false;
     $scope.civilWarFilter = false;
     if ($scope.artFilter){
-      ArtMarkers = AllPlaces.filter((marker)=>{
-        if (marker.artwork || marker.description || marker.medium) {
+      ArtMarkers = AllMarkers.filter((marker)=>{
+        if (marker.markerType === "publicArt" || marker.markerType === "metroArt") {
           return marker;
         }
       });
     $scope.MarkerCards = ArtMarkers;
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.MarkerCards = AllMarkers;
     }
   }
 
@@ -75,14 +73,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     $scope.artFilter = false;
     $scope.civilWarFilter = false;
     if ($scope.historicalFilter){
-      HistoricalMarkers = AllPlaces.filter((marker)=>{
-        if (marker.marker_text) {
+      HistoricalMarkers = AllMarkers.filter((marker)=>{
+        if (marker.markerType === 'historic') {
           return marker;
         }
       });
       $scope.MarkerCards = HistoricalMarkers;
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.MarkerCards = AllMarkers;
     }
   }
 
@@ -91,14 +89,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     $scope.historicalFilter = false;
     $scope.artFilter = false;
     if ($scope.civilWarFilter){
-      CivilWarMarkers = AllPlaces.filter((marker)=>{
-        if (marker.civil_war_site === "X") {
+      CivilWarMarkers = AllMarkers.filter((marker)=>{
+        if (marker.civil_war_site) {
           return marker;
         }
       });
       $scope.MarkerCards = CivilWarMarkers;
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.MarkerCards = AllMarkers;
     }
   }
 

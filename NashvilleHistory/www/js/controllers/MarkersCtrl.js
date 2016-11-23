@@ -81,73 +81,35 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       )
       .then((data)=>{
         AllMarkers = data[0].concat(data[1]).concat(data[2]);
+        console.log("markers from API", AllMarkers);
         addDistanceToMarkers();
       })
     }
-
-    //All of these properties need to be added to avoid calling the API when a marker is clicked and more information about the marker needs to be displayed below the map.
+     //All of these properties need to be added to avoid calling the API when a marker is clicked and more information about the marker needs to be displayed below the map.
     function addMarkersToView() {
       $scope.markers = AllMarkers.map((marker, index)=>{
-        return {
-          id: index,
-          latitude: marker.latitude,
-          longitude: marker.longitude,
-          title: marker.title,
-          number: marker.number,
-          marker_text: marker.marker_text,
-          description: marker.description,
-          type: marker.type,
-          artwork: marker.artwork,
-          medium: marker.medium,
-          first_name: marker.first_name,
-          last_name: marker.last_name,
-          distance: marker.distance,
-          photo_link: marker.photo_link,
-          icon: "../img/aquaMarker.png"
-        }
+        marker.id = index;
+        marker.icon = "../img/aquaMarker.png";
+        return marker;
       });
-      console.log($scope.markers);
     }
 
     //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
     function addDistanceToMarkers(){
-      return $q.all(
-        AllMarkers.map((marker)=>{
-          return MarkerCardsFact.getDistanceToMarker(lat, long, marker.latitude.toString(), marker.longitude.toString())
-        })
-      )
-      .then((data)=>{
-        console.log("distance data from Google", data)
-        //Adding the distance and duration via car to the AllMarkers array
-        let distanceData = data.forEach((row, index)=>{
-            AllMarkers[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
-            AllMarkers[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
-        })
-        distanceData.forEach((element, index)=>{
-          AllMarkers[index].distance = element.distance;
-          AllMarkers[index].duration = element.duration;
-          sortMarkersByDistance();
-          areMarkersBookmarked();
-          addMarkersToView();
-        })
-      })
-      .catch((error)=>{
-        console.log("error", error);
         let distanceData = AllMarkers.map((marker)=>{
-          return calculateDistanceToMarker(lat, long, marker.latitude, marker.longitude)
+          return MarkerCardsFact.calculateDistanceToMarker(lat, long, marker.latitude, marker.longitude)
         })
         distanceData.forEach((element, index)=>{
           AllMarkers[index].distance = element;
         })
         sortMarkersByDistance();
         areMarkersBookmarked();
-        addMarkersToView();
-      })
     }
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){
-      $scope.MarkerCards = sortByKey(AllMarkers, "distance");
+      AllMarkers = sortByKey(AllMarkers, "distance");
+      addMarkersToView();
     }
 
     function sortByKey(array, key) {
@@ -155,30 +117,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
-    }
-
-    function calculateDistanceToMarker(lat1, lon1, lat2, lon2){
-      var R = 6371e3; // metres
-      var φ1 = toRadians(lat1);
-      var φ2 = toRadians(lat2);
-      var Δφ = toRadians((lat2-lat1));
-      var Δλ = toRadians((lon2-lon1));
-
-      var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ/2) * Math.sin(Δλ/2);
-      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      var d = R * c;
-      return getMiles(d).toPrecision(2);
-    }
-
-    function toRadians(x) {
-       return x * Math.PI / 180;
-    }
-
-    // Converts meters to miles
-    function getMiles(i) {
-     return i*0.000621371192;
     }
 
     //TODO: Get the bookmarked markers and make sure the user cannot add a marker twice to his/her bookmarks
@@ -198,7 +136,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
 
     $scope.AddToBookmarks = (marker, index)=>{
       marker.uid = AuthFact.getUserId();
-      $scope.MarkerCards[index].isBookmarked = true;
+      $scope.markers[index].isBookmarked = true;
       BookmarkFact.addBookmark(marker);
     }
 

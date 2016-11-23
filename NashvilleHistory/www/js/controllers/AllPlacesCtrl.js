@@ -18,14 +18,29 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     )
     .then((data)=>{
       AllPlaces = data[0].concat(data[1]).concat(data[2]);
+      AllPlaces = AllPlaces.sort(sortAllPlaces);
       console.log("All places", AllPlaces);
       $scope.MarkerCards = AllPlaces;
-    })
+    });
+  }
+
+  function sortAllPlaces(x, y) {
+    // Determines if the place is a historical marker or artwork
+    // Returns the name of the place to be used when sorting
+    function getPlaceName(place) {
+      if (place.title) {
+        return place.title.toLowerCase();
+      } else if (place.artwork) {
+        return place.artwork.toLowerCase();
+      }
+    }
+
+    return getPlaceName(x) < getPlaceName(y) ? -1 : 1;
   }
 
   getAllPlaces();
 
-  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected. 
+  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected.
   $scope.filterArt = ()=>{
     $scope.artFilter = !$scope.artFilter;
     $scope.historicalFilter = false;
@@ -36,9 +51,9 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
           return marker;
         }
       });
-    $scope.MarkerCards = ArtMarkers;
+      $scope.MarkerCards = ArtMarkers.sort(sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.MarkerCards = AllPlaces.sort(sortAllPlaces);
     }
   }
 
@@ -52,9 +67,9 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
           return marker;
         }
       });
-      $scope.MarkerCards = HistoricalMarkers;
+      $scope.MarkerCards = HistoricalMarkers.sort(sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.MarkerCards = AllPlaces.sort(sortAllPlaces);
     }
   }
 
@@ -68,9 +83,9 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
           return marker;
         }
       });
-      $scope.MarkerCards = CivilWarMarkers;
+      $scope.MarkerCards = CivilWarMarkers.sort(sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.MarkerCards = AllPlaces.sort(sortAllPlaces);
     }
   }
 

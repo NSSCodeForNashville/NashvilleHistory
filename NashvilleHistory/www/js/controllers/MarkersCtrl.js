@@ -1,12 +1,15 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q, $ionicModal) {
 
-  console.log(MarkerCardsFact)
+  // IMPORTANT: Locations are given a Unique Id that is a combination of Lat and Long
+  // Example: Location with lattitude 36.175226 and longitude -86.774255 will have a uid of "36.175226-86.774255"
 
-  $scope.HistoricalCards;
+  // Holds data for displaying location markers on the Google map
   $scope.markers = [];
   $scope.showDescription = false;
+  // Stores current marker for Add to Route modal
+  $scope.selectedMarker;
   let AllMarkers;
   let lat;
   let long;
@@ -84,7 +87,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           name: marker.title
         }
       });
-      console.log($scope.markers);
+      console.log("Map Markers",$scope.markers);
     }
 
     //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
@@ -106,10 +109,36 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           } else {
             AllMarkers[index].distance = row;
           }
+
+          // Generate a UID propery on each marker: Marker Lat + Marker Long + First Word in Title, strip periods and minuses
+          if (AllMarkers[index].title) {
+            AllMarkers[index].uid = AllMarkers[index].title.match(/^([\w\-]+)/)[0] + (AllMarkers[index].latitude + AllMarkers[index].longitude).replace(/\-|\./g,"")
+          } else if (AllMarkers[index].artwork) {
+            AllMarkers[index].uid = AllMarkers[index].artwork.match(/^([\w\-]+)/)[0] + (AllMarkers[index].latitude + AllMarkers[index].longitude).replace(/\-|\./g,"")
+          }
         })
         sortMarkersByDistance();
       })
     }
+
+    // ADD TO ROUTE/TOUR FUNCTIONALITY
+    // Add to Route modal
+    $scope.tourModal = function(markerUID) {
+      // Create the login modal and show it
+      $ionicModal.fromTemplateUrl('templates/tourModal.html', {
+        scope: $scope
+      }).then(function(modal) {
+        $scope.modal = modal;
+        setSelectedMarker(markerUID);
+        $scope.modal.show();
+      });
+    };
+
+    // Triggered in the route/tour modal to close it
+    $scope.closeTourModal = function() {
+      $scope.modal.hide();
+      $scope.modal.remove();
+    };
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){
@@ -121,6 +150,15 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
+    }
+
+    function setSelectedMarker(uid) {
+      for (let i = 0; i < AllMarkers.length; i++) {
+        if (AllMarkers[i].uid == uid) {
+          $scope.selectedMarker = AllMarkers[i];
+        }
+      }
+      console.log("Selected Marker", $scope.selectedMarker);
     }
 
   //The following code block watches the user's location and updates the center of the map as the user moves.

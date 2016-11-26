@@ -10,6 +10,10 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   $scope.showDescription = false;
   // Stores current marker for Add to Route modal
   $scope.selectedMarker;
+  // Stores active tour/route for Add to Route modal
+  $scope.activeTour = {id: ""};
+  $scope.newTour = {name: ""};
+
   let AllMarkers;
   let lat;
   let long;
@@ -91,6 +95,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     }
 
     //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
+    // This function also calculates a uid for each marker and assigns a title for artwork
     function addDistanceToMarkers(){
       return $q.all(
         AllMarkers.map((marker)=>{
@@ -109,8 +114,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           } else {
             AllMarkers[index].distance = row;
           }
-
-          // Generate a UID propery on each marker: Marker Lat + Marker Long + First Word in Title, strip periods and minuses
+          // Generate a UID property on each marker: Marker Lat + Marker Long + First Word in Title, strip periods and minuses
           if (AllMarkers[index].title) {
             AllMarkers[index].uid = AllMarkers[index].title.match(/^([\w\-]+)/)[0] + (AllMarkers[index].latitude + AllMarkers[index].longitude).replace(/\-|\./g,"")
           } else if (AllMarkers[index].artwork) {
@@ -139,6 +143,14 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       $scope.modal.hide();
       $scope.modal.remove();
     };
+
+    $scope.doAddToRoute = function() {
+      console.log($scope.activeTour);
+      console.log($scope.newTour)
+      // if ($scope.activeTour == "") {
+
+      // }
+    }
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){

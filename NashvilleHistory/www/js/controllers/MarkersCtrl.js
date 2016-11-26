@@ -63,9 +63,9 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       lat = $scope.map.center.latitude.toString();
       long = $scope.map.center.longitude.toString();
       return $q.all(
-        [MarkerCardsFact.getHistoricalMarkersInRadius(lat, long, "3500"),
-        MarkerCardsFact.getArtInPublicPlacesMarkersInRadius(lat,long, "3500"),
-        MarkerCardsFact.getMetroPublicArtMarkersInRadius(lat, long, "3500")]
+        [MarkerCardsFact.getHistoricalMarkersInRadius(lat, long, "1500"),
+        MarkerCardsFact.getArtInPublicPlacesMarkersInRadius(lat,long, "1500"),
+        MarkerCardsFact.getMetroPublicArtMarkersInRadius(lat, long, "1500")]
       )
       .then((data)=>{
         AllMarkers = data[0].concat(data[1]).concat(data[2]);

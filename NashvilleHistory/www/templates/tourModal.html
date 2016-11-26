@@ -20,10 +20,11 @@
           </div>
           <select ng-model="activeTour.id">
             <option value="">Please Select</option>            
-            <option value="new">**New Route</option>
-            <!--<option ng-repeat="route in $parent.loggedInUser.customTours"></option>-->
+            <option value="new">*New Route*</option>
+            <option ng-repeat="(key, route) in $parent.loggedInUser.customTours" value="{{key}}">{{route.name}}</option>
           </select>
         </label>
+        <span class="item" ng-show="$parent.loggedInUser.customTours[activeTour.id].places[selectedMarker.uid]">You've already added this place</span>
         <label class="item item-input" ng-show="activeTour.id == 'new'">
           <span class="input-label">Route Title</span>
           <input type="text" ng-model="newTour.name">

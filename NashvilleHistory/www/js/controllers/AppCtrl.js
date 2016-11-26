@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, CustomTourFact) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -50,6 +50,11 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       $scope.loggedInUser = user;
+      // Retrieve custom tours for this user on login
+      CustomTourFact.retrieveCustomTours(user.uid)
+        .then((tours)=> {
+          $scope.loggedInUser.customTours = tours;
+        })
     }
   });
 

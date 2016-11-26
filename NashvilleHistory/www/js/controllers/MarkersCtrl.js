@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q, $ionicModal) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, CustomTourFact, $q, $ionicModal) {
 
   // IMPORTANT: Locations are given a Unique Id that is a combination of Lat and Long
   // Example: Location with lattitude 36.175226 and longitude -86.774255 will have a uid of "36.175226-86.774255"
@@ -12,7 +12,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   $scope.selectedMarker;
   // Stores active tour/route for Add to Route modal
   $scope.activeTour = {id: ""};
-  $scope.newTour = {name: ""};
+  $scope.newTour = {name: "", places: {}};
 
   let AllMarkers;
   let lat;
@@ -145,11 +145,43 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     };
 
     $scope.doAddToRoute = function() {
-      console.log($scope.activeTour);
-      console.log($scope.newTour)
-      // if ($scope.activeTour == "") {
-
-      // }
+      console.log($scope.$parent.loggedInUser);
+      // Prepare place object
+      let newPlace = {
+          dateAdded: Date.now()
+        }
+      // Preparing a new route/tour to be added to Firebase
+      if ($scope.activeTour.id == "new") {
+        newPlace.order = 1;
+        $scope.newTour.userId = $scope.$parent.loggedInUser.uid;
+        $scope.newTour.dateAdded = Date.now();
+        $scope.newTour.public = false;
+        $scope.newTour.places[$scope.selectedMarker.uid] = newPlace;
+        console.log($scope.newTour);
+        // Ship off to Firebase
+        CustomTourFact.pushNewTour($scope.newTour)
+          .then((tourUID) => {
+            // Add new Tour to user object with provided tourUID
+            $scope.$parent.loggedInUser.customTours[tourUID] = $scope.newTour;
+            // Clear New Tour object
+            $scope.newTour = {name: "", places: {}};
+          })
+      } else {
+        if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
+          newPlace.order = Object.keys($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places).length + 1;
+        } else {
+          newPlace.order = 1;
+        }
+        CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
+          .then((response)=> {
+            if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
+              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[response.name] = newPlace;
+            } else {
+              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places = {};
+              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[response.name] = newPlace;
+            }
+          })
+      }
     }
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.

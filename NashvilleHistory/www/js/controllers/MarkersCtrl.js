@@ -75,32 +75,40 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           name: marker.title
         }
       });
-      console.log("Map Markers",$scope.markers);
     }
 
-    //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
-    // This function also calculates a uid for each marker and assigns a title for artwork
+    // The purpose of this function is to take the latitude and longitude of each marker, find the distance from the user to that marker.
+    // This function first calculates distance manually and sorts the AllPlaces array.
+    // Then it confirms distance of the closest 10 results via Google Maps Distance Matrix API and sorts again.
     function addDistanceToMarkers(){
-      console.log("Add Distance to Markers", $scope.$parent.AllPlaces);
       return $q.all(
         $scope.$parent.AllPlace = $scope.$parent.AllPlaces.map((marker)=>{
-          return MarkerCardsFact.getDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(), marker.latitude.toString(), marker.longitude.toString())
+          return MarkerCardsFact.getManualDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(), marker.latitude.toString(), marker.longitude.toString())
         })
       )
       .then((data)=>{
-        console.log("distance data from Google", data)
         //Adding the distance and duration via car to the AllPlaces array
-        let distanceData = data.forEach((row, index)=>{
-          // If Google API returned the data
-          if (row.rows) {
-            $scope.$parent.AllPlaces[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
-            $scope.$parent.AllPlaces[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
-          // Else use the manual calculation
-          } else {
+        data.forEach((row, index)=>{
             $scope.$parent.AllPlaces[index].distance = row;
-          }
         })
         sortMarkersByDistance();
+        var promises = [];
+        for (let i = 0; i < 10; i++) {
+            promises.push(MarkerCardsFact.getDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(),$scope.$parent.AllPlaces[i].latitude.toString(),$scope.$parent.AllPlaces[i].longitude.toString()));
+          }
+        $q.all(promises).then((data) => {
+          data.forEach((row, index)=>{
+            // If Google API returned the data
+            if (row.rows) {
+              $scope.$parent.AllPlaces[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
+              $scope.$parent.AllPlaces[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
+            // Else use manual calculation
+            } else {
+              $scope.$parent.AllPlaces[index].distance = row;
+            }
+          })
+          sortMarkersByDistance();
+        })
       })
     }
 
@@ -167,7 +175,8 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){
-      $scope.$parent.MarkerCards = sortByKey($scope.$parent.AllPlaces, "distance");
+      $scope.$parent.AllPlaces = sortByKey($scope.$parent.AllPlaces, "distance");
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces;
     }
 
     function sortByKey(array, key) {
@@ -183,7 +192,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           $scope.selectedMarker = $scope.$parent.AllPlaces[i];
         }
       }
-      console.log("Selected Marker", $scope.selectedMarker);
     }
 
   //The following code block watches the user's location and updates the center of the map as the user moves.

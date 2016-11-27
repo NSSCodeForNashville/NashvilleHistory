@@ -14,62 +14,65 @@ app.factory("AllPlacesFact", ($q, $http, KeyGetter)=>{
     return $q((resolve, reject)=>{
       $http.get(`https://data.nashville.gov/resource/m4hn-ihe4.json?$$app_token=${NashvilleGovAppToken}`)
       .success((data)=>{
-        resolve(data);
+        resolve(data.map(marker => {
+          marker.title = parseSpecialCharacters(marker.title)
+          return marker;
+        }).filter((marker) => {
+          if (marker.longitude) {
+            return marker;
+          }
+        }));
       })
       .error((err)=>{
         reject(err);
       })
     })
-    .then((markers) => {
-      return markers.map(marker => {
-        marker.title = parseSpecialCharacters(marker.title)
-        return marker;
-      });
-    });
   }
 
   let getAllArtInPublicPlacesMarkers = ()=>{
     return $q((resolve, reject)=>{
       $http.get(`https://data.nashville.gov/resource/xakp-ess3.json?$$app_token=${NashvilleGovAppToken}`)
       .success((data)=>{
-        resolve(data);
+        resolve(data.map(marker => {
+          if (marker.title) {
+            marker.title = parseSpecialCharacters(marker.title);
+          } else if (marker.artwork) {
+            marker.artwork = parseSpecialCharacters(marker.artwork);
+          }
+          return marker;
+        }).filter((marker) => {
+          if (marker.longitude) {
+            return marker;
+          }
+        }));
       })
       .error((err)=>{
         reject(err);
       })
     })
-    .then((artMarkers) => {
-      return artMarkers;
-      return artMarkers.map(marker => {
-        marker.artwork = parseSpecialCharacters(marker.artwork);
-        if (marker.title) {
-          marker.title = parseSpecialCharacters(marker.title);
-        }
-        return marker;
-      });
-    });
   }
 
   let getAllMetroPublicArtMarkers = ()=>{
     return $q((resolve, reject)=>{
       $http.get(`https://data.nashville.gov/resource/pbc9-7sh6.json?$$app_token=${NashvilleGovAppToken}`)
       .success((data)=>{
-        resolve(data);
+        resolve(data.map(marker => {
+          if (marker.title) {
+            marker.title = parseSpecialCharacters(marker.title);
+          } else if (marker.artwork) {
+            marker.artwork = parseSpecialCharacters(marker.artwork);
+          }
+          return marker;
+        }).filter((marker) => {
+          if (marker.longitude) {
+            return marker;
+          }
+        }));
       })
       .error((err)=>{
         reject(err);
       })
     })
-    .then((metroMarkers) => {
-      console.log('Metro markers:', metroMarkers);
-      return metroMarkers.map(marker => {
-        marker.artwork = parseSpecialCharacters(marker.artwork);
-        if (marker.title) {
-          marker.title = parseSpecialCharacters(marker.title);
-        }
-        return marker;
-      });
-    });
   }
 
   // let getDistanceToMarker = (lat, long, markerLat, markerLong)=>{

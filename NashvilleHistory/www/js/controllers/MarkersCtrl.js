@@ -58,32 +58,16 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         }
       }
       //Once the location of the user is found using geolocation, this function is called to find the markers that are within a certain radius of the user's location.
-      getMarkersWithinRadius();
+      addDistanceToMarkers();
+      addMarkersToView();
     }, function(err) {
       /****** TODO
       Create an error message that the user sees if the location cannot be found ******/
       console.log("Could not get location");
     });
 
-    //The purpose of this function is to get all of the markers in a certain radius from the user, art and historical, from the Nashville Gov API and place them in one array.
-    function getMarkersWithinRadius(){
-      lat = $scope.map.center.latitude.toString();
-      long = $scope.map.center.longitude.toString();
-      return $q.all(
-        [MarkerCardsFact.getHistoricalMarkersInRadius(lat, long, "1500"),
-        MarkerCardsFact.getArtInPublicPlacesMarkersInRadius(lat,long, "1500"),
-        MarkerCardsFact.getMetroPublicArtMarkersInRadius(lat, long, "1500")]
-      )
-      .then((data)=>{
-        AllMarkers = data[0].concat(data[1]).concat(data[2]);
-        console.log("All markers", AllMarkers);
-        addDistanceToMarkers();
-        addMarkersToView();
-      })
-    }
-
     function addMarkersToView() {
-      $scope.markers = AllMarkers.map((marker, index)=>{
+      $scope.markers = $scope.$parent.AllPlaces.map((marker, index)=>{
         return {
           id: index,
           latitude: marker.latitude,
@@ -97,28 +81,23 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
     // This function also calculates a uid for each marker and assigns a title for artwork
     function addDistanceToMarkers(){
+      console.log("Add Distance to Markers", $scope.$parent.AllPlaces);
       return $q.all(
-        AllMarkers.map((marker)=>{
-          return MarkerCardsFact.getDistanceToMarker(lat, long, marker.latitude.toString(), marker.longitude.toString())
+        $scope.$parent.AllPlace = $scope.$parent.AllPlaces.map((marker)=>{
+          return MarkerCardsFact.getDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(), marker.latitude.toString(), marker.longitude.toString())
         })
       )
       .then((data)=>{
         console.log("distance data from Google", data)
-        //Adding the distance and duration via car to the AllMarkers array
+        //Adding the distance and duration via car to the AllPlaces array
         let distanceData = data.forEach((row, index)=>{
           // If Google API returned the data
           if (row.rows) {
-            AllMarkers[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
-            AllMarkers[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
+            $scope.$parent.AllPlaces[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
+            $scope.$parent.AllPlaces[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
           // Else use the manual calculation
           } else {
-            AllMarkers[index].distance = row;
-          }
-          // Generate a UID property on each marker: Marker Lat + Marker Long + First Word in Title, strip periods and minuses
-          if (AllMarkers[index].title) {
-            AllMarkers[index].uid = AllMarkers[index].title.match(/^([\w\-]+)/)[0] + (AllMarkers[index].latitude + AllMarkers[index].longitude).replace(/\-|\./g,"")
-          } else if (AllMarkers[index].artwork) {
-            AllMarkers[index].uid = AllMarkers[index].artwork.match(/^([\w\-]+)/)[0] + (AllMarkers[index].latitude + AllMarkers[index].longitude).replace(/\-|\./g,"")
+            $scope.$parent.AllPlaces[index].distance = row;
           }
         })
         sortMarkersByDistance();
@@ -186,7 +165,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){
-      $scope.MarkerCards = sortByKey(AllMarkers, "distance");
+      $scope.$parent.MarkerCards = sortByKey($scope.$parent.AllPlaces, "distance");
     }
 
     function sortByKey(array, key) {
@@ -197,9 +176,9 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     }
 
     function setSelectedMarker(uid) {
-      for (let i = 0; i < AllMarkers.length; i++) {
-        if (AllMarkers[i].uid == uid) {
-          $scope.selectedMarker = AllMarkers[i];
+      for (let i = 0; i < $scope.$parent.AllPlaces.length; i++) {
+        if ($scope.$parent.AllPlaces[i].uid == uid) {
+          $scope.selectedMarker = $scope.$parent.AllPlaces[i];
         }
       }
       console.log("Selected Marker", $scope.selectedMarker);

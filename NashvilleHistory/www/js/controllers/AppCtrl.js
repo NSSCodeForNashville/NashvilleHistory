@@ -1,13 +1,55 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, CustomTourFact) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact) {
 
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  // Cards that will be displayed on whichever page
+  $scope.MarkerCards;
+  // All places available in memory
+  $scope.AllPlaces;
+
+  //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
+  function getAllPlaces(){
+    return $q.all(
+      [AllPlacesFact.getAllHistoricalMarkers(),
+      AllPlacesFact.getAllArtInPublicPlacesMarkers(),
+      AllPlacesFact.getAllMetroPublicArtMarkers()]
+    )
+    .then((data)=>{
+      $scope.AllPlaces = data[0].concat(data[1]).concat(data[2]);
+      $scope.AllPlaces = $scope.AllPlaces.sort($scope.sortAllPlaces);
+      $scope.AllPlaces.forEach(generateUID);
+      console.log("All places", $scope.AllPlaces);
+      $scope.MarkerCards = $scope.AllPlaces;
+    });
+  }
+
+  function generateUID(element, index) {
+      // Generate a UID property on each marker: Marker Lat + Marker Long + First Word in Title, strip periods and minuses
+      if ($scope.AllPlaces[index].title) {
+        $scope.AllPlaces[index].title = $scope.AllPlaces[index].title.replace(/\[|\]/g,'');
+        $scope.AllPlaces[index].uid = ($scope.AllPlaces[index].title.match(/^([\w\-]+)/)[0] + $scope.AllPlaces[index].latitude + $scope.AllPlaces[index].longitude).replace(/\-|\./g,"")
+      } else if ($scope.AllPlaces[index].artwork) {
+        $scope.AllPlaces[index].uid = ($scope.AllPlaces[index].artwork.match(/^([\w\-]+)/)[0] + $scope.AllPlaces[index].latitude + $scope.AllPlaces[index].longitude).replace(/\-|\./g,"")
+      }
+    }
+
+  $scope.sortAllPlaces = (x, y) => {
+    // Determines if the place is a historical marker or artwork
+    // Returns the name of the place to be used when sorting
+    function getPlaceName(place) {
+      if (place.title) {
+        return place.title.toLowerCase();
+      } else if (place.artwork) {
+        return place.artwork.toLowerCase();
+      }
+    }
+
+    return getPlaceName(x) < getPlaceName(y) ? -1 : 1;
+  }
+
+  // Execute on start
+  getAllPlaces();
+
 
   // Current Firebase Logged-In User Object
   $scope.loggedInUser = null;

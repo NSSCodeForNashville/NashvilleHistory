@@ -18,7 +18,7 @@
         <a class="button" ng-click="filterDistance">Distance</a>
       </div> -->
     <!-- Add filter buttons here -->
-    <div class="list card" ng-repeat="markerCard in MarkerCards | filter: searchText" >
+    <div class="list card" ng-repeat="markerCard in $parent.MarkerCards | filter: searchText" >
       <div class="item item-divider" ng-class="{historicalMarker: markerCard.marker_text}">
         <div class="row">
           <div class="col-75">

@@ -25,29 +25,39 @@ app.controller('ToursCtrl', function($scope, $state, $rootScope, CustomTourFact)
     }
 
     $scope.increaseOrder = (uid, index) => {
-        // Resolve Order updates
-        $scope.$parent.MarkerCards.forEach((element, i) => {
-            if (i != 0 && i == index - 1) {
-                $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[element.uid].order += 1
-            }
-        })
-        $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[uid].order -= 1;
-        // Update tours object on Firebase
-        CustomTourFact.updatePlaces($state.params.tourId,$scope.$parent.loggedInUser.customTours[$state.params.tourId])
-        updateTourMarkers();
+        // If button was clicked on first place in list, do nothing
+        if (index != 0) {
+            $scope.$parent.MarkerCards.forEach((element, i) => {
+                // Find the element that was ahead and adjust its order down one
+                if (i == index - 1) {
+                    $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[element.uid].order += 1
+                }
+            })
+            // Move the clicked element's order up one
+            $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[uid].order -= 1;
+            // Update tours object on Firebase
+            CustomTourFact.updatePlaces($state.params.tourId,$scope.$parent.loggedInUser.customTours[$state.params.tourId])
+            // Redisplay MarkerCards based on new order
+            updateTourMarkers();
+        }
     }
 
     $scope.decreaseOrder = (uid, index) => {
-        // Resolve Order updates
-        $scope.$parent.MarkerCards.forEach((element, i) => {
-            if (i > index) {
-                $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[element.uid].order -= 1
-            }
-        })
-        $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[uid].order += 1;
-        // Update tours object on Firebase
-        CustomTourFact.updatePlaces($state.params.tourId,$scope.$parent.loggedInUser.customTours[$state.params.tourId])
-        updateTourMarkers();
+        // If button was clicked on last place in list, do nothing
+        if (index != Object.keys($scope.$parent.loggedInUser.customTours[$state.params.tourId].places).length - 1) {
+            $scope.$parent.MarkerCards.forEach((element, i) => {
+                // Find the element that was behind and adjust its order up one
+                if (i == index + 1) {
+                    $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[element.uid].order -= 1
+                }
+            })
+            // Move the clicked element's order down one
+            $scope.$parent.loggedInUser.customTours[$state.params.tourId].places[uid].order += 1;
+            // Update tours object on Firebase
+            CustomTourFact.updatePlaces($state.params.tourId,$scope.$parent.loggedInUser.customTours[$state.params.tourId])
+            // Redisplay MarkerCards based on new order
+            updateTourMarkers();
+        }
     }
 
     function updateTourMarkers() {

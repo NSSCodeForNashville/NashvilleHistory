@@ -24,7 +24,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   }
 
   function generateUID(element, index) {
-      // Generate a UID property on each marker: Marker Lat + Marker Long + First Word in Title, strip periods and minuses
+      // Generate a UID property on each marker: First Word in Title + Marker Lat + Marker Long, strip periods and minuses
       if ($scope.AllPlaces[index].title) {
         $scope.AllPlaces[index].title = $scope.AllPlaces[index].title.replace(/\[|\]/g,'');
         $scope.AllPlaces[index].uid = ($scope.AllPlaces[index].title.match(/^([\w\-]+)/)[0] + $scope.AllPlaces[index].latitude + $scope.AllPlaces[index].longitude).replace(/\-|\./g,"")

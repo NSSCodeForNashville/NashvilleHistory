@@ -144,7 +144,9 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
             // Clear New Tour object
             $scope.newTour = {name: "", places: {}};
           })
+      // If we're just adding to an existing tour on Firebase
       } else {
+        // Assign an Order to the place, according to how many places already exist on this route
         if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
           newPlace.order = Object.keys($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places).length + 1;
         } else {
@@ -152,6 +154,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         }
         CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
           .then((response)=> {
+            // Add newly created place to user object
             if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
               $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
             } else {

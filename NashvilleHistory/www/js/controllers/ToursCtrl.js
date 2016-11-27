@@ -51,7 +51,9 @@ app.controller('ToursCtrl', function($scope, $state, $rootScope, CustomTourFact)
     }
 
     function updateTourMarkers() {
+        // Grab all places on this tour
         let places = $scope.$parent.loggedInUser.customTours[$state.params.tourId].places;
+        // Add an order property to MarkerCards on scope for sorting later
         $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.filter((element,index) => {
             if (places[element.uid]) {
                 var orderedMarker = $scope.$parent.AllPlaces[index];
@@ -59,6 +61,7 @@ app.controller('ToursCtrl', function($scope, $state, $rootScope, CustomTourFact)
                 return orderedMarker;
             }
         })
+        // Sort MarkerCards according to the order property
         sortMarkersByOrder();
     }
 

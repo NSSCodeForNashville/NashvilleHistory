@@ -50,6 +50,84 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   // Execute on start
   getAllPlaces();
 
+  // ADD TO ROUTE/TOUR FUNCTIONALITY
+
+  // Stores current marker for Add to Route modal
+  $scope.selectedMarker;
+  // Stores active tour/route for Add to Route modal
+  $scope.activeTour = {id: ""};
+  $scope.newTour = {name: "", places: {}};
+
+  // Add to Route modal
+  $scope.tourModal = function(markerUID) {
+    // Create the login modal and show it
+    $ionicModal.fromTemplateUrl('templates/tourModal.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+      setSelectedMarker(markerUID);
+      $scope.modal.show();
+    });
+  };
+
+  // Triggered in the route/tour modal to close it
+  $scope.closeTourModal = function() {
+    $scope.modal.hide();
+    $scope.modal.remove();
+  };
+
+  $scope.doAddToRoute = function() {;
+    // Prepare place object
+    let newPlace = {
+        dateAdded: Date.now()
+      }
+    // Preparing a new route/tour to be added to Firebase
+    if ($scope.activeTour.id == "new") {
+      newPlace.order = 1;
+      $scope.newTour.userId = $scope.loggedInUser.uid;
+      $scope.newTour.dateAdded = Date.now();
+      $scope.newTour.public = false;
+      $scope.newTour.places[$scope.selectedMarker.uid] = newPlace;
+      console.log($scope.newTour);
+      // Ship off to Firebase
+      CustomTourFact.pushNewTour($scope.newTour)
+        .then((tourUID) => {
+          // Add new Tour to user object with provided tourUID
+          $scope.loggedInUser.customTours[tourUID] = $scope.newTour;
+          // Clear New Tour object
+          $scope.newTour = {name: "", places: {}};
+        })
+    // If we're just adding to an existing tour on Firebase
+    } else {
+      // Assign an Order to the place, according to how many places already exist on this route
+      if ($scope.loggedInUser.customTours[$scope.activeTour.id].places) {
+        newPlace.order = Object.keys($scope.loggedInUser.customTours[$scope.activeTour.id].places).length + 1;
+      } else {
+        newPlace.order = 1;
+      }
+      CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
+        .then((response)=> {
+          // Add newly created place to user object
+          if ($scope.loggedInUser.customTours[$scope.activeTour.id].places) {
+            $scope.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
+          } else {
+            $scope.loggedInUser.customTours[$scope.activeTour.id].places = {};
+            $scope.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
+          }
+        })
+    }
+    $scope.modal.hide();
+    $scope.modal.remove();
+  }
+
+  function setSelectedMarker(uid) {
+    for (let i = 0; i < $scope.AllPlaces.length; i++) {
+      if ($scope.AllPlaces[i].uid == uid) {
+        $scope.selectedMarker = $scope.AllPlaces[i];
+      }
+    }
+  }
+
   // Current Firebase Logged-In User Object
   $scope.loggedInUser = null;
 

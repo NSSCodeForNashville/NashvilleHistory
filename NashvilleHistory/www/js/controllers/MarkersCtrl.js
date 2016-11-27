@@ -8,11 +8,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   // Holds data for displaying location markers on the Google map
   $scope.markers = [];
   $scope.showDescription = false;
-  // Stores current marker for Add to Route modal
-  $scope.selectedMarker;
-  // Stores active tour/route for Add to Route modal
-  $scope.activeTour = {id: ""};
-  $scope.newTour = {name: "", places: {}};
 
   let AllMarkers;
   let lat;
@@ -112,67 +107,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       })
     }
 
-    // ADD TO ROUTE/TOUR FUNCTIONALITY
-    // Add to Route modal
-    $scope.tourModal = function(markerUID) {
-      // Create the login modal and show it
-      $ionicModal.fromTemplateUrl('templates/tourModal.html', {
-        scope: $scope
-      }).then(function(modal) {
-        $scope.modal = modal;
-        setSelectedMarker(markerUID);
-        $scope.modal.show();
-      });
-    };
-
-    // Triggered in the route/tour modal to close it
-    $scope.closeTourModal = function() {
-      $scope.modal.hide();
-      $scope.modal.remove();
-    };
-
-    $scope.doAddToRoute = function() {;
-      // Prepare place object
-      let newPlace = {
-          dateAdded: Date.now()
-        }
-      // Preparing a new route/tour to be added to Firebase
-      if ($scope.activeTour.id == "new") {
-        newPlace.order = 1;
-        $scope.newTour.userId = $scope.$parent.loggedInUser.uid;
-        $scope.newTour.dateAdded = Date.now();
-        $scope.newTour.public = false;
-        $scope.newTour.places[$scope.selectedMarker.uid] = newPlace;
-        console.log($scope.newTour);
-        // Ship off to Firebase
-        CustomTourFact.pushNewTour($scope.newTour)
-          .then((tourUID) => {
-            // Add new Tour to user object with provided tourUID
-            $scope.$parent.loggedInUser.customTours[tourUID] = $scope.newTour;
-            // Clear New Tour object
-            $scope.newTour = {name: "", places: {}};
-          })
-      // If we're just adding to an existing tour on Firebase
-      } else {
-        // Assign an Order to the place, according to how many places already exist on this route
-        if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
-          newPlace.order = Object.keys($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places).length + 1;
-        } else {
-          newPlace.order = 1;
-        }
-        CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
-          .then((response)=> {
-            // Add newly created place to user object
-            if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
-              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
-            } else {
-              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places = {};
-              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
-            }
-          })
-      }
-    }
-
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){
       $scope.$parent.AllPlaces = sortByKey($scope.$parent.AllPlaces, "distance");
@@ -184,14 +118,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
-    }
-
-    function setSelectedMarker(uid) {
-      for (let i = 0; i < $scope.$parent.AllPlaces.length; i++) {
-        if ($scope.$parent.AllPlaces[i].uid == uid) {
-          $scope.selectedMarker = $scope.$parent.AllPlaces[i];
-        }
-      }
     }
 
   //The following code block watches the user's location and updates the center of the map as the user moves.

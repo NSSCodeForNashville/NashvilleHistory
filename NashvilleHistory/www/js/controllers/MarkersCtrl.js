@@ -123,8 +123,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       $scope.modal.remove();
     };
 
-    $scope.doAddToRoute = function() {
-      console.log($scope.$parent.loggedInUser);
+    $scope.doAddToRoute = function() {;
       // Prepare place object
       let newPlace = {
           dateAdded: Date.now()
@@ -154,10 +153,10 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
           .then((response)=> {
             if ($scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places) {
-              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[response.name] = newPlace;
+              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
             } else {
               $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places = {};
-              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[response.name] = newPlace;
+              $scope.$parent.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
             }
           })
       }

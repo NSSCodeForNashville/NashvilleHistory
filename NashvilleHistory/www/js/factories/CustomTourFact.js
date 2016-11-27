@@ -38,5 +38,17 @@ app.factory("CustomTourFact", ($q, $http, KeyGetter)=>{
     })
   }
 
-    return {pushNewTour, retrieveCustomTours, putNewPlace};
+  let updatePlaces = (tourId,tourObj) => {
+    return $q((resolve,reject) => {
+      $http.put(`${KeyGetter.databaseURL}/tours/${tourId}.json`,JSON.stringify(tourObj))
+        .then((response) => {
+          resolve(response);
+        }, (error) => {
+          console.error(error);
+          reject(error);
+        })
+    })
+  }
+
+    return {pushNewTour, retrieveCustomTours, putNewPlace, updatePlaces};
 });

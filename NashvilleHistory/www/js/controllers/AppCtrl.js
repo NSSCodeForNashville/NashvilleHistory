@@ -50,7 +50,6 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   // Execute on start
   getAllPlaces();
 
-
   // Current Firebase Logged-In User Object
   $scope.loggedInUser = null;
 
@@ -97,7 +96,10 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
         .then((tours)=> {
           $scope.loggedInUser.customTours = tours;
         })
+    } else {
+      $scope.loggedInUser = null;
     }
+    console.log("Current Logged In User", $scope.loggedInUser)
   });
 
   // Logout

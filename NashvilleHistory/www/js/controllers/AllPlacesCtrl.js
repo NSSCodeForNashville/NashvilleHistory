@@ -1,13 +1,30 @@
 'use strict';
 
-app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
+app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, BookmarkFact, AuthFact){
 
   let HistoricalMarkers;
   let ArtMarkers;
   let CivilWarMarkers;
+  let AllMarkers;
   $scope.artFilter = false;
   $scope.historicalFilter = false;
   $scope.civilWarFilter = false;
+
+
+  function areMarkersBookmarked (){
+      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          AllMarkers.forEach((marker, index)=>{
+            if (bookmarks[key].uid === marker.uid){
+              $scope.$parent.MarkerCards[index].isBookmarked = true;
+            }
+          })
+        })
+      })
+      $scope.MarkerCards = AllMarkers;
+    }
 
   //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected.
   $scope.filterArt = ()=>{
@@ -57,5 +74,12 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
       $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
+
+  $scope.AddToBookmarks = (marker, index)=>{
+      marker.userId = AuthFact.getUserId();
+      $scope.$parent.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker)
+  }
+
 
 });

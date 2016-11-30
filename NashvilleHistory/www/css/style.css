@@ -31,7 +31,20 @@ img {
   color: white;
 }
 
-a.logged-out {
+.logged-out {
   text-decoration: none;
   color: lightgrey;
 }
+
+.logged-out:hover {
+  text-decoration: none;
+  color: lightgrey;
+}
+
+.bookmarked {
+  color: #aaa;
+  margin-top: 15px;
+  display: inline-block;
+  font-style: italic;
+}
+

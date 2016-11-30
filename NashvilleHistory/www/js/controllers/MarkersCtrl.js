@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, CustomTourFact, $q, $ionicModal) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, AuthFact, BookmarkFact, MarkerCardsFact, CustomTourFact, $q, $ionicModal) {
 
   // IMPORTANT: Locations are given a Unique Id that is a combination of Lat and Long
   // Example: Location with lattitude 36.175226 and longitude -86.774255 will have a uid of "36.175226-86.774255"
@@ -8,11 +8,11 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   // Holds data for displaying location markers on the Google map
   $scope.markers = [];
   $scope.showDescription = false;
-
-  let AllMarkers;
+  $scope.markerClicked = false;
+  $scope.activeMarker = null;
+  let markerId = 0;
   let lat;
   let long;
-
   //The map needs to be set to something before the location of the user is found by the phone otherwise there is an error.
   $scope.map = {
     center: {
@@ -40,7 +40,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log(position);
       $scope.map = {
         center: {latitude: position.coords.latitude, longitude: position.coords.longitude },
-        zoom: 12
+        zoom: 13
       };
       $scope.youAreHere = {
         id: 0,
@@ -61,13 +61,15 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log("Could not get location");
     });
 
+
     function addMarkersToView() {
       $scope.markers = $scope.$parent.AllPlaces.map((marker, index)=>{
         return {
           id: index,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          name: marker.title
+          name: marker.title,
+          icon: "../img/aquaMarker.png"
         }
       });
     }
@@ -119,6 +121,47 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
     }
+
+    //TODO: Get the bookmarked markers and make sure the user cannot add a marker twice to his/her bookmarks
+    function areMarkersBookmarked (){
+      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          AllMarkers.forEach((marker, index)=>{
+            if (bookmarks[key].uid  === marker.uid){
+              $scope.$parent.MarkerCards[index].isBookmarked = true;
+            }
+          });
+        });
+      });
+    }
+
+    $scope.AddToBookmarks = (marker, index)=>{
+      marker.userId = AuthFact.getUserId();
+      $scope.$parent.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker);
+    }
+
+    //If a marker is clicked the marker should enlarge - become the BigAquaMarker - and the description of that marker should show up underneath the map. If another marker is clicked, the previously chosen marker will go back to normal size and the selected marker will enlarge.
+    $scope.markerClick = (instance, event, marker)=>{
+      $scope.markers[marker.id].icon = '../img/BigAquaMarker2.png';
+      if (marker.id === markerId){
+        $scope.markerClicked = !$scope.markerClicked;
+      }
+      else {
+        $scope.markers[markerId].icon = '../img/aquaMarker.png';
+        markerId = marker.id;
+        $scope.markerClicked = true;
+      }
+      $scope.activeMarker = marker;
+    }
+    //This will close the description of the active marker and show the list of cards as well as change the chosen marker back to a normal size.
+    $scope.closeActiveMarker = ()=>{
+      $scope.markers[markerId].icon = '../img/aquaMarker.png';
+      $scope.markerClicked = false;
+    }
+
 
   //The following code block watches the user's location and updates the center of the map as the user moves.
   // var watchOptions = { timeout : 5000, enableHighAccuracy: false };

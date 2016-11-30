@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory("AllPlacesFact", ($q, $http, KeyGetter)=>{
+app.factory("AllPlacesFact", ($q, $http, KeyGetter, MarkerCardsFact)=>{
 
   let NashvilleGovAppToken = KeyGetter.historicMarkersKey;
   let GoogleAppToken = KeyGetter.googleMapsKey;
@@ -21,7 +21,7 @@ app.factory("AllPlacesFact", ($q, $http, KeyGetter)=>{
     })
   }
 
-  let getAllArtInPublicPlacesMarkers = ()=>{
+  const getAllArtInPublicPlacesMarkers = ()=>{
     return $q((resolve, reject)=>{
       $http.get(`https://data.nashville.gov/resource/xakp-ess3.json?$$app_token=${NashvilleGovAppToken}`)
       .success((data)=>{
@@ -37,7 +37,7 @@ app.factory("AllPlacesFact", ($q, $http, KeyGetter)=>{
     })
   }
 
-  let getAllMetroPublicArtMarkers = ()=>{
+  const getAllMetroPublicArtMarkers = ()=>{
     return $q((resolve, reject)=>{
       $http.get(`https://data.nashville.gov/resource/pbc9-7sh6.json?$$app_token=${NashvilleGovAppToken}`)
       .success((data)=>{
@@ -104,17 +104,6 @@ app.factory("AllPlacesFact", ($q, $http, KeyGetter)=>{
     return str.join(' ');
   }
 
-  // let getDistanceToMarker = (lat, long, markerLat, markerLong)=>{
-  //   return $q((resolve, reject)=>{
-  //     $http.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${markerLat}%2C${markerLong}&key=${GoogleAppToken}`)
-  //     .success((data)=>{
-  //       resolve(data);
-  //     })
-  //     .error((err)=>{
-  //       reject(err);
-  //     })
-  //   });
-  // }
 
   return {getAllHistoricalMarkers, getAllArtInPublicPlacesMarkers, getAllMetroPublicArtMarkers};
 });

@@ -1,5 +1,44 @@
 <ion-view view-title="Bookmarks">
   <ion-content>
     <h1>Bookmarks</h1>
+    <!-- Add filter buttons here -->
+    <div class="list card" ng-repeat="bookmark in Bookmarks" >
+      <div class="item item-divider">
+        <div class="row">
+          <div class="col-75">
+           <i class="fa fa-university" ng-show="bookmark.marker_text"></i>
+           <i class="fa fa-flag" ng-show="bookmark.civil_war_site"></i>
+           <i class="fa fa-paint-brush" ng-show="bookmark.description || bookmark.artwork || bookmark.medium"></i>
+            <span> {{bookmark.title}} {{bookmark.type}} <span ng-show="bookmark.first_name"> {{bookmark.artwork}} <i> by {{bookmark.first_name}} {{bookmark.last_name}}</i></span></span>
+            <!-- <p><i> {{bookmark.distance}} mi. away</i></p> -->
+          </div>
+          <div class="col">
+            <button class="button danger" ng-click="showDescription = !showDescription ">
+            <i class="icon ion-arrow-down-b" ng-show="!showDescription"></i>
+            <i class="icon ion-arrow-up-b" ng-show="showDescription"></i>
+          </button>
+          </div>
+        </div>
+        <div ng-show="showDescription">
+          <div class="item item-text-wrap" ng-show="bookmark.marker_text || bookmark.description || bookmark.medium">
+            <img src="{{bookmark.image}}" alt="artwork photo" ng-show="bookmark.photo_link">
+            <p>
+              {{bookmark.marker_text}} {{bookmark.description}}
+            </p>
+            <p ng-show="bookmark.medium"> MEDIUM: {{bookmark.medium}} </p>
+          </div>
+          <div class="button-bar">
+            <button class="button danger tooltip" ng-click="AddToRoute(bookmark)">
+              <i class="icon ion-plus"></i> Add to Route
+            </button>
+            <button class="button danger">
+              <i class="icon ion-navigate"></i> Go
+            </button>
+            <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)">
+              <i class="icon ion-close"></i> Remove Bookmark
+            </button>
+          </div>
+        </div>
+      </div>
   </ion-content>
 </ion-view>

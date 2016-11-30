@@ -41,6 +41,14 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
     });
   }
 
+  let getManualDistanceToMarker = (lat, long, markerLat, markerLong)=>{
+    return $q((resolve, reject)=>{
+        let distance = calculateDistanceToMarker(lat, long, markerLat, markerLong);
+        resolve(distance);
+      })
+    };
+
+
   let getDistanceToMarker = (lat, long, markerLat, markerLong)=>{
     return $q((resolve, reject)=>{
       $http.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${markerLat}%2C${markerLong}&key=${GoogleAppToken}`)
@@ -88,5 +96,5 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
    return i*0.000621371192;
   }
 
-  return {getHistoricalMarkersInRadius, getArtInPublicPlacesMarkersInRadius, getMetroPublicArtMarkersInRadius, getDistanceToMarker};
+  return {getHistoricalMarkersInRadius, getArtInPublicPlacesMarkersInRadius, getMetroPublicArtMarkersInRadius, getDistanceToMarker, getManualDistanceToMarker};
 });

@@ -17,7 +17,7 @@
               models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
         </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <div class="list card" ng-repeat="markerCard in MarkerCards">
+      <div class="list card" ng-repeat="markerCard in $parent.MarkerCards">
         <div class="item item-divider">
           <div class="row">
             <div class="col-75">
@@ -46,7 +46,7 @@
             <button class="button danger">
               <i class="icon ion-bookmark"></i> Bookmark
             </button>
-            <button class="button danger">
+            <button class="button danger" ng-click="$parent.tourModal('{{markerCard.uid}}')">
               <i class="icon ion-plus"></i> Add to Route
             </button>
             <button class="button danger">

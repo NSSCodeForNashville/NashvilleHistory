@@ -1,24 +1,8 @@
-<ion-view view-title="All Places">
+<ion-view view-title="Edit Tour">
   <ion-content>
-    <h1>All Places</h1>
-      <div class="row">
-        <div class="col">
-          <i class="icon ion-search"></i>
-          <input ng-model="searchText" placeholder="Search places..." class="markerSearchBar">
-        </div>
-      </div>
-      <p> Filter by Type </p>
-      <div class="button-bar">
-        <a ng-class="{button: true, selectedFilter: artFilter}" ng-click="filterArt()">Art</a>
-        <a ng-class="{button: true, selectedFilter: historicalFilter}" ng-click="filterHistorical()">Historical</a>
-        <a ng-class="{button: true, selectedFilter: civilWarFilter}" ng-click="filterCivilWar()">Civil War Site</a>
-      </div>
-      <!-- <div class="button-bar">
-        <a class="button" ng-click="filterAlpha">Alphabetical</a>
-        <a class="button" ng-click="filterDistance">Distance</a>
-      </div> -->
+    <h1>Edit Tour</h1>
     <!-- Add filter buttons here -->
-    <div class="list card" ng-repeat="markerCard in $parent.MarkerCards | filter: searchText" >
+    <div class="list card" ng-repeat="markerCard in $parent.MarkerCards" >
       <div class="item item-divider" ng-class="{historicalMarker: markerCard.marker_text}">
         <div class="row">
           <div class="col-75">
@@ -43,17 +27,17 @@
             </p>
             <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
           </div>
-          <div class="button-bar">
-            <button class="button danger">
-              <i class="icon ion-bookmark"></i> Bookmark
-            </button>
-            <button class="button danger" ng-click="$parent.tourModal('{{markerCard.uid}}')">
-              <i class="icon ion-plus"></i> Add to Route
-            </button>
-            <button class="button danger">
-              <i class="icon ion-navigate"></i> Go
-            </button>
-          </div>
+        </div>
+        <div class="button-bar">
+          <button class="button danger" ng-click="deletePlace('{{markerCard.uid}}', $index)">
+            <i class="icon ion-trash-b"></i> Delete
+          </button>
+          <button class="button danger" ng-click="increaseOrder('{{markerCard.uid}}', $index)">
+            <i class="icon ion-chevron-up"></i> Move Up
+          </button>
+          <button class="button danger" ng-click="decreaseOrder('{{markerCard.uid}}', $index)">
+            <i class="icon ion-chevron-down"></i> Move Down
+          </button>
         </div>
       </div>
   </ion-content>

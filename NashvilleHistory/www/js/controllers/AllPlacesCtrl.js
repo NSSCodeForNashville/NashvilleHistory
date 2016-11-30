@@ -17,8 +17,8 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
         console.log("bookmarked markers", bookmarks);
         Object.keys(bookmarks).map((key)=>{
           AllMarkers.forEach((marker, index)=>{
-            if (bookmarks[key].latitude === marker.latitude && bookmarks[key].longitude === marker.longitude){
-              AllMarkers[index].isBookmarked = true;
+            if (bookmarks[key].uid === marker.uid){
+              $scope.$parent.MarkerCards[index].isBookmarked = true;
             }
           })
         })
@@ -81,8 +81,5 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
       BookmarkFact.addBookmark(marker)
   }
 
-  $scope.AddToRoute = (marker)=>{
-    console.log("clicked add to route");
-  }
 
 });

@@ -139,14 +139,8 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
 
     $scope.AddToBookmarks = (marker, index)=>{
       marker.userId = AuthFact.getUserId();
-      console.log("cards on $scope", $scope.$parent.markerCards);
       $scope.$parent.MarkerCards[index].isBookmarked = true;
       BookmarkFact.addBookmark(marker);
-    }
-
-    $scope.AddToRoute = (marker)=>{
-      console.log("clicked add to route");
-      /**TODO: Add the marker to a route **/
     }
 
     //If a marker is clicked the marker should enlarge - become the BigAquaMarker - and the description of that marker should show up underneath the map. If another marker is clicked, the previously chosen marker will go back to normal size and the selected marker will enlarge.

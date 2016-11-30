@@ -98,6 +98,15 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ionic.native
         controller: 'BookmarkCtrl'
       }
     }
+  })
+  .state('app.editMyTour', {
+    url: '/edit-tour/{tourId}',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/editTour.html',
+        controller: 'ToursCtrl'
+      }
+    }
   });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/markers');

@@ -13,11 +13,8 @@
         <ui-gmap-markers
               models="markers" coords="'self'" icon="'icon'" options="'options'" click="markerClick" ng-cloak>
         </ui-gmap-markers>
-        <!-- <ui-gmap-markers
-              models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
-        </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <div class="list card" ng-repeat="markerCard in markers" ng-show="!markerClicked">
+      <div class="list card" ng-repeat="markerCard in $parent.MarkerCards">
         <div class="item item-divider">
           <div class="row">
             <div class="col-75">
@@ -44,13 +41,13 @@
           </div>
           <div class="button-bar row">
             <div class="col-33">
-              <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
+              <button class="button danger tooltip" ng-disabled="!$parent.userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
                 <i class="icon ion-bookmark"></i> Bookmark
               </button>
               <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
             </div>
             <div class="col-33">
-              <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
+              <button class="button danger tooltip" ng-disabled="!$parent.userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
                 <i class="icon ion-plus"></i> Add to Route
               </button>
             </div>
@@ -89,11 +86,10 @@
             <p ng-show="activeMarker.medium"> MEDIUM: {{activeMarker.medium}} </p>
           </div>
           <div class="button-bar">
-            <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(activeMarker)">
+            <button class="button danger tooltip" ng-disabled="!$parent.userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(activeMarker)">
               <i class="icon ion-bookmark"></i> Bookmark
             </button>
-            <!-- <span class="bookmarked"> <i> Already Bookmarked <i> </span> -->
-            <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(activeMarker)">
+            <button class="button danger" ng-disabled="!$parent.userLoggedIn" title="You must be logged in to bookmark this" ng-click="$parent.tourModal('{{markerCard.uid}}')">
               <i class="icon ion-plus"></i> Add to Route
             </button>
             <button class="button danger">

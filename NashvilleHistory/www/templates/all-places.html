@@ -18,8 +18,8 @@
         <a class="button" ng-click="filterDistance">Distance</a>
       </div> -->
     <!-- Add filter buttons here -->
-    <div class="list card" ng-repeat="markerCard in MarkerCards | filter: searchText" >
-      <div class="item item-divider" ng-class="{historicalMarker: markerCard.description}">
+    <div class="list card" ng-repeat="markerCard in $parent.MarkerCards | filter: searchText" >
+      <div class="item item-divider" ng-class="{historicalMarker: markerCard.marker_text}">
         <div class="row">
           <div class="col-75">
            <i class="fa fa-university" ng-show="markerCard.markerType == 'historic'"></i>
@@ -44,14 +44,14 @@
           </div>
           <div class="button-bar row">
             <div class="col-33">
-              <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
-                <i class="icon ion-bookmark"></i> Bookmark
+              <button class="button danger tooltip" ng-disabled="!$parent.userLoggedIn" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
+              <i class="icon ion-bookmark"></i> Bookmark
               </button>
               <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
             </div>
             <div class="col-33">
-              <button class="button danger tooltip" ng-disabled="!userLoggedIn" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
-                <i class="icon ion-plus"></i> Add to Route
+              <button class="button danger" ng-click="$parent.tourModal('{{markerCard.uid}}')">
+              <i class="icon ion-plus"></i> Add to Route
               </button>
             </div>
             <div class="col-33">
@@ -59,7 +59,6 @@
                 <i class="icon ion-navigate"></i> Go
               </button>
             </div>
-          </div>
           </div>
         </div>
       </div>

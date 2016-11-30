@@ -5,66 +5,32 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
   const NashvilleGovAppToken = KeyGetter.historicMarkersKey;
   const GoogleAppToken = KeyGetter.googleMapsKey;
 
-  const getHistoricalMarkersInRadius = (lat, long, radius)=>{
+  let getManualDistanceToMarker = (lat, long, markerLat, markerLong)=>{
     return $q((resolve, reject)=>{
-      $http.get(`https://data.nashville.gov/resource/m4hn-ihe4.json?$where=within_circle(mapped_location, ${lat}, ${long}, ${radius})&$$app_token=${NashvilleGovAppToken}`)
+        let distance = calculateDistanceToMarker(lat, long, markerLat, markerLong);
+        resolve(distance);
+      })
+    };
+
+
+  let getDistanceToMarker = (lat, long, markerLat, markerLong)=>{
+    return $q((resolve, reject)=>{
+      $http.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${markerLat}%2C${markerLong}&key=${GoogleAppToken}`)
       .success((data)=>{
-        resolve(filterMarkers(data));
+        // If Google API errors out, calculate distance manually
+        if (data.error_message) {
+          console.log("using manual distance");
+          let distance = calculateDistanceToMarker(lat, long, markerLat, markerLong);
+          resolve(distance);
+        } else {
+          resolve(data);
+        }
       })
       .error((err)=>{
-        reject(err);
+        console.error(error);
+        reject(error);
       })
     });
-  }
-
-  const getArtInPublicPlacesMarkersInRadius = (lat, long, radius)=>{
-    return $q((resolve, reject)=>{
-      $http.get(`https://data.nashville.gov/resource/xakp-ess3.json?$where=within_circle(mapped_location, ${lat}, ${long}, ${radius})&$$app_token=${NashvilleGovAppToken}`)
-      .success((data)=>{
-        resolve(filterMarkers(data));
-      })
-      .error((err)=>{
-        reject(err);
-      })
-    });
-  }
-
-  const getMetroPublicArtMarkersInRadius = (lat, long, radius)=>{
-    return $q((resolve, reject)=>{
-      $http.get(`https://data.nashville.gov/resource/pbc9-7sh6.json?$where=within_circle(mapped_location, ${lat}, ${long}, ${radius})&$$app_token=${NashvilleGovAppToken}`)
-      .success((data)=>{
-        resolve(filterMarkers(data));
-      })
-      .error((err)=>{
-        reject(err);
-      })
-    });
-  }
-
-  const filterMarkers = (markers)=>{
-    return markers.map((marker)=>{
-      const newMarker = {
-        latitude: marker.latitude,
-        longitude: marker.longitude,
-        civil_war_site: marker.civil_war_site ? true : false,
-        description: marker.description ? marker.description : marker.marker_text,
-        medium: marker.medium ? marker.medium : "",
-        //Add a stock photo for historical markers here if wanted
-        image: marker.photo_link ? marker.photo_link : "",
-        artistName: marker.first_name ? marker.first_name + " " + marker.last_name : ""
-      }
-      if (marker.title){
-        newMarker.markerType = "historic";
-        newMarker.title = marker.title;
-      } else if (marker.artwork) {
-        newMarker.markerType = "metroArt";
-        newMarker.title = marker.artwork;
-      } else {
-        newMarker.markerType = "publicArt";
-        newMarker.title = marker.type;
-      }
-      return newMarker;
-    })
   }
   // Haversine formula, source: http://www.movable-type.co.uk/scripts/latlong.html
   // where  φ is latitude, λ is longitude, R is earth’s radius (mean radius = 6,371km);
@@ -93,5 +59,5 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
    return i*0.000621371192;
   }
 
-  return {getHistoricalMarkersInRadius, getArtInPublicPlacesMarkersInRadius, getMetroPublicArtMarkersInRadius, calculateDistanceToMarker, filterMarkers};
+  return {getDistanceToMarker, getManualDistanceToMarker};
 });

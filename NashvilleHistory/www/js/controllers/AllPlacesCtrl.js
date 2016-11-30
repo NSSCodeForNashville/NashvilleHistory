@@ -2,7 +2,6 @@
 
 app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, BookmarkFact, AuthFact){
 
-  let AllPlaces;
   let HistoricalMarkers;
   let ArtMarkers;
   let CivilWarMarkers;
@@ -10,46 +9,6 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
   $scope.artFilter = false;
   $scope.historicalFilter = false;
   $scope.civilWarFilter = false;
-  // Auto-Login Handler
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      $scope.loggedInUser = user;
-      $scope.userLoggedIn = true;
-    }
-    else {
-      $scope.loggedInUser = null;
-      $scope.userLoggedIn = false;
-    }
-  });
-  //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
-  function getAllPlaces(){
-    return $q.all(
-      [AllPlacesFact.getAllHistoricalMarkers(),
-      AllPlacesFact.getAllArtInPublicPlacesMarkers(),
-      AllPlacesFact.getAllMetroPublicArtMarkers()]
-    )
-    .then((data)=>{
-      AllMarkers = data[0].concat(data[1]).concat(data[2]);
-      AllMarkers = AllMarkers.sort(sortAllPlaces);
-      $scope.MarkerCards = AllMarkers;
-    });
-  }
-
-  function sortAllPlaces(x, y) {
-    // Determines if the place is a historical marker or artwork
-    // Returns the name of the place to be used when sorting
-    function getPlaceName(place) {
-      if (place.title) {
-        return place.title.toLowerCase();
-      } else if (place.artwork) {
-        return place.artwork.toLowerCase();
-      }
-    }
-
-    return getPlaceName(x) < getPlaceName(y) ? -1 : 1;
-  }
-
-  getAllPlaces();
 
 
   function areMarkersBookmarked (){
@@ -73,14 +32,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     $scope.historicalFilter = false;
     $scope.civilWarFilter = false;
     if ($scope.artFilter){
-      ArtMarkers = AllMarkers.filter((marker)=>{
-        if (marker.markerType === "publicArt" || marker.markerType === "metroArt") {
+      ArtMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
+        if (marker.markerType == "metroArt" || marker.markerType == "publicArt") {
           return marker;
         }
       });
-      $scope.MarkerCards = ArtMarkers.sort(sortArtPlaces);
+      $scope.$parent.MarkerCards = ArtMarkers.sort($scope.$parent.sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllMarkers.sort(sortAllPlaces);
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
 
@@ -89,14 +48,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     $scope.artFilter = false;
     $scope.civilWarFilter = false;
     if ($scope.historicalFilter){
-      HistoricalMarkers = AllMarkers.filter((marker)=>{
-        if (marker.markerType === 'historic') {
+      HistoricalMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
+        if (marker.markerType == "historic") {
           return marker;
         }
       });
-      $scope.MarkerCards = HistoricalMarkers.sort(sortAllPlaces);
+      $scope.$parent.MarkerCards = HistoricalMarkers.sort($scope.$parent.sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllMarkers.sort(sortAllPlaces);
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
 
@@ -105,14 +64,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     $scope.historicalFilter = false;
     $scope.artFilter = false;
     if ($scope.civilWarFilter){
-      CivilWarMarkers = AllMarkers.filter((marker)=>{
+      CivilWarMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
         if (marker.civil_war_site) {
           return marker;
         }
       });
-      $scope.MarkerCards = CivilWarMarkers.sort(sortAllPlaces);
+      $scope.$parent.MarkerCards = CivilWarMarkers.sort($scope.$parent.sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllMarkers.sort(sortAllPlaces);
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
 

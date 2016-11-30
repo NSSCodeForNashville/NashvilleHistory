@@ -27,8 +27,7 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
         }
       })
       .error((err)=>{
-        console.error(error);
-        reject(error);
+        reject(err);
       })
     });
   }

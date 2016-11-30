@@ -7,7 +7,7 @@
         <div class="row">
           <div class="col-75">
            <i class="fa fa-university" ng-show="bookmark.marker_text"></i>
-           <i class="fa fa-flag" ng-show="bookmark.civil_war_site === 'X'"></i>
+           <i class="fa fa-flag" ng-show="bookmark.civil_war_site"></i>
            <i class="fa fa-paint-brush" ng-show="bookmark.description || bookmark.artwork || bookmark.medium"></i>
             <span> {{bookmark.title}} {{bookmark.type}} <span ng-show="bookmark.first_name"> {{bookmark.artwork}} <i> by {{bookmark.first_name}} {{bookmark.last_name}}</i></span></span>
             <!-- <p><i> {{bookmark.distance}} mi. away</i></p> -->
@@ -21,7 +21,7 @@
         </div>
         <div ng-show="showDescription">
           <div class="item item-text-wrap" ng-show="bookmark.marker_text || bookmark.description || bookmark.medium">
-            <img src="{{bookmark.photo_link}}" alt="artwork photo" ng-show="bookmark.photo_link">
+            <img src="{{bookmark.image}}" alt="artwork photo" ng-show="bookmark.photo_link">
             <p>
               {{bookmark.marker_text}} {{bookmark.description}}
             </p>

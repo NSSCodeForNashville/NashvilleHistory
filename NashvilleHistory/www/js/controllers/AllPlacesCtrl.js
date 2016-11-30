@@ -76,8 +76,8 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
   }
 
   $scope.AddToBookmarks = (marker, index)=>{
-      marker.uid = AuthFact.getUserId();
-      $scope.MarkerCards[index].isBookmarked = true;
+      marker.userId = AuthFact.getUserId();
+      $scope.$parent.MarkerCards[index].isBookmarked = true;
       BookmarkFact.addBookmark(marker)
   }
 

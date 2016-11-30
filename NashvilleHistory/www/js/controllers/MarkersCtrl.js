@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, CustomTourFact, $q, $ionicModal) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, AuthFact, BookmarkFact, MarkerCardsFact, CustomTourFact, $q, $ionicModal) {
 
   // IMPORTANT: Locations are given a Unique Id that is a combination of Lat and Long
   // Example: Location with lattitude 36.175226 and longitude -86.774255 will have a uid of "36.175226-86.774255"
@@ -11,19 +11,8 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
   $scope.markerClicked = false;
   $scope.activeMarker = null;
   let markerId = 0;
-  let AllMarkers;
   let lat;
   let long;
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      $scope.loggedInUser = user;
-      $scope.userLoggedIn = true;
-    }
-    else {
-      $scope.loggedInUser = null;
-      $scope.userLoggedIn = false;
-    }
-  });
   //The map needs to be set to something before the location of the user is found by the phone otherwise there is an error.
   $scope.map = {
     center: {
@@ -80,7 +69,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
           latitude: marker.latitude,
           longitude: marker.longitude,
           name: marker.title,
-          icon: "../img/aquaMarker.png";
+          icon: "../img/aquaMarker.png"
         }
       });
     }
@@ -141,7 +130,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         Object.keys(bookmarks).map((key)=>{
           AllMarkers.forEach((marker, index)=>{
             if (bookmarks[key].uid  === marker.uid){
-              AllMarkers[index].isBookmarked = true;
+              $scope.$parent.MarkerCards[index].isBookmarked = true;
             }
           });
         });
@@ -149,8 +138,9 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
     }
 
     $scope.AddToBookmarks = (marker, index)=>{
-      marker.uid = AuthFact.getUserId();
-      $scope.markers[index].isBookmarked = true;
+      marker.userId = AuthFact.getUserId();
+      console.log("cards on $scope", $scope.$parent.markerCards);
+      $scope.$parent.MarkerCards[index].isBookmarked = true;
       BookmarkFact.addBookmark(marker);
     }
 

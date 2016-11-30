@@ -4,7 +4,7 @@ app.factory("BookmarkFact", ($q, $http, KeyGetter, AuthFact)=>{
 
   let getAllBookmarks = (userId)=>{
     return $q((resolve, reject)=>{
-      $http.get(`https://nashvillehistory-9a80d.firebaseio.com/bookmarks.json?orderBy="uid"&equalTo="${userId}"`)
+      $http.get(`https://nashvillehistory-9a80d.firebaseio.com/bookmarks.json?orderBy="userId"&equalTo="${userId}"`)
       .success((bookmarks)=>{
         resolve(bookmarks);
       })

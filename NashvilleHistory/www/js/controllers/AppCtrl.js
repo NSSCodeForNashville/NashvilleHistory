@@ -17,21 +17,10 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
     .then((data)=>{
       $scope.AllPlaces = data[0].concat(data[1]).concat(data[2]);
       $scope.AllPlaces = $scope.AllPlaces.sort($scope.sortAllPlaces);
-      $scope.AllPlaces.forEach(generateUID);
       console.log("All places", $scope.AllPlaces);
       $scope.MarkerCards = $scope.AllPlaces;
     });
   }
-
-  function generateUID(element, index) {
-      // Generate a UID property on each marker: First Word in Title + Marker Lat + Marker Long, strip periods and minuses
-      if ($scope.AllPlaces[index].title) {
-        $scope.AllPlaces[index].title = $scope.AllPlaces[index].title.replace(/\[|\]/g,'');
-        $scope.AllPlaces[index].uid = ($scope.AllPlaces[index].title.match(/^([\w\-]+)/)[0] + $scope.AllPlaces[index].latitude + $scope.AllPlaces[index].longitude).replace(/\-|\./g,"")
-      } else if ($scope.AllPlaces[index].artwork) {
-        $scope.AllPlaces[index].uid = ($scope.AllPlaces[index].artwork.match(/^([\w\-]+)/)[0] + $scope.AllPlaces[index].latitude + $scope.AllPlaces[index].longitude).replace(/\-|\./g,"")
-      }
-    }
 
   $scope.sortAllPlaces = (x, y) => {
     // Determines if the place is a historical marker or artwork

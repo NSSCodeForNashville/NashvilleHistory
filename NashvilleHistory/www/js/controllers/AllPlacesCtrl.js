@@ -16,7 +16,7 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     $scope.civilWarFilter = false;
     if ($scope.artFilter){
       ArtMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
-        if (marker.artwork || marker.description || marker.medium) {
+        if (marker.markerType == "metroArt" || marker.markerType == "publicArt") {
           return marker;
         }
       });
@@ -32,7 +32,7 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     $scope.civilWarFilter = false;
     if ($scope.historicalFilter){
       HistoricalMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
-        if (marker.marker_text) {
+        if (marker.markerType == "historic") {
           return marker;
         }
       });
@@ -48,7 +48,7 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     $scope.artFilter = false;
     if ($scope.civilWarFilter){
       CivilWarMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
-        if (marker.civil_war_site === "X") {
+        if (marker.civil_war_site) {
           return marker;
         }
       });

@@ -30,11 +30,27 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
     )
     .then((data)=>{
       AllMarkers = data[0].concat(data[1]).concat(data[2]);
-      areMarkersBookmarked();
-    })
+      AllMarkers = AllMarkers.sort(sortAllPlaces);
+      $scope.MarkerCards = AllMarkers;
+    });
+  }
+
+  function sortAllPlaces(x, y) {
+    // Determines if the place is a historical marker or artwork
+    // Returns the name of the place to be used when sorting
+    function getPlaceName(place) {
+      if (place.title) {
+        return place.title.toLowerCase();
+      } else if (place.artwork) {
+        return place.artwork.toLowerCase();
+      }
+    }
+
+    return getPlaceName(x) < getPlaceName(y) ? -1 : 1;
   }
 
   getAllPlaces();
+
 
   function areMarkersBookmarked (){
       BookmarkFact.getAllBookmarks(AuthFact.getUserId())
@@ -62,9 +78,9 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
           return marker;
         }
       });
-    $scope.MarkerCards = ArtMarkers;
+      $scope.MarkerCards = ArtMarkers.sort(sortArtPlaces);
     } else {
-      $scope.MarkerCards = AllMarkers;
+      $scope.MarkerCards = AllMarkers.sort(sortAllPlaces);
     }
   }
 
@@ -78,9 +94,9 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
           return marker;
         }
       });
-      $scope.MarkerCards = HistoricalMarkers;
+      $scope.MarkerCards = HistoricalMarkers.sort(sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllMarkers;
+      $scope.MarkerCards = AllMarkers.sort(sortAllPlaces);
     }
   }
 
@@ -94,9 +110,9 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
           return marker;
         }
       });
-      $scope.MarkerCards = CivilWarMarkers;
+      $scope.MarkerCards = CivilWarMarkers.sort(sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllMarkers;
+      $scope.MarkerCards = AllMarkers.sort(sortAllPlaces);
     }
   }
 

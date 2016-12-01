@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, BookmarkFact) {
 
   // Cards that will be displayed on whichever page
   $scope.MarkerCards;
@@ -158,16 +158,34 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       $scope.loggedInUser = user;
+
       // Retrieve custom tours for this user on login
       CustomTourFact.retrieveCustomTours(user.uid)
         .then((tours)=> {
           $scope.loggedInUser.customTours = tours;
         })
+      // Retrieve bookmarks for this user on login
+      areMarkersBookmarked(user);
     } else {
       $scope.loggedInUser = null;
     }
     console.log("Current Logged In User", $scope.loggedInUser)
   });
+
+  // Retrieve user bookmarks and update AllPlaces with new detail
+  function areMarkersBookmarked (user){
+      BookmarkFact.getAllBookmarks(user.uid)
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          $scope.AllPlaces.forEach((marker, index)=>{
+            if (bookmarks[key].uid === marker.uid){
+              $scope.AllPlaces[index].isBookmarked = true;
+            }
+          })
+        })
+      })
+    }
 
   // Logout
   $scope.logout = function() {

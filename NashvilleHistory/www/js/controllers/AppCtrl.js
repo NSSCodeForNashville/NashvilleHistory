@@ -158,7 +158,6 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       $scope.loggedInUser = user;
-
       // Retrieve custom tours for this user on login
       CustomTourFact.retrieveCustomTours(user.uid)
         .then((tours)=> {

@@ -2,44 +2,16 @@
 
 app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
 
-  let NashvilleGovAppToken = KeyGetter.historicMarkersKey;
-  let GoogleAppToken = KeyGetter.googleMapsKey;
+  const NashvilleGovAppToken = KeyGetter.historicMarkersKey;
+  const GoogleAppToken = KeyGetter.googleMapsKey;
 
-  let getHistoricalMarkersInRadius = (lat, long, radius)=>{
+  let getManualDistanceToMarker = (lat, long, markerLat, markerLong)=>{
     return $q((resolve, reject)=>{
-      $http.get(`https://data.nashville.gov/resource/m4hn-ihe4.json?$where=within_circle(mapped_location, ${lat}, ${long}, ${radius})&$$app_token=${NashvilleGovAppToken}`)
-      .success((data)=>{
-        resolve(data);
+        let distance = calculateDistanceToMarker(lat, long, markerLat, markerLong);
+        resolve(distance);
       })
-      .error((err)=>{
-        reject(err);
-      })
-    });
-  }
+    };
 
-  let getArtInPublicPlacesMarkersInRadius = (lat, long, radius)=>{
-    return $q((resolve, reject)=>{
-      $http.get(`https://data.nashville.gov/resource/xakp-ess3.json?$where=within_circle(mapped_location, ${lat}, ${long}, ${radius})&$$app_token=${NashvilleGovAppToken}`)
-      .success((data)=>{
-        resolve(data);
-      })
-      .error((err)=>{
-        reject(err);
-      })
-    });
-  }
-
-  let getMetroPublicArtMarkersInRadius = (lat, long, radius)=>{
-    return $q((resolve, reject)=>{
-      $http.get(`https://data.nashville.gov/resource/pbc9-7sh6.json?$where=within_circle(mapped_location, ${lat}, ${long}, ${radius})&$$app_token=${NashvilleGovAppToken}`)
-      .success((data)=>{
-        resolve(data);
-      })
-      .error((err)=>{
-        reject(err);
-      })
-    });
-  }
 
   let getDistanceToMarker = (lat, long, markerLat, markerLong)=>{
     return $q((resolve, reject)=>{
@@ -55,16 +27,14 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
         }
       })
       .error((err)=>{
-        console.error(error);
-        reject(error);
+        reject(err);
       })
     });
   }
-
   // Haversine formula, source: http://www.movable-type.co.uk/scripts/latlong.html
   // where  φ is latitude, λ is longitude, R is earth’s radius (mean radius = 6,371km);
   // note that angles need to be in radians to pass to trig functions
-  function calculateDistanceToMarker(lat1, lon1, lat2, lon2){
+  const calculateDistanceToMarker = (lat1, lon1, lat2, lon2)=>{
     var R = 6371e3; // metres
     var φ1 = toRadians(lat1);
     var φ2 = toRadians(lat2);
@@ -88,5 +58,5 @@ app.factory("MarkerCardsFact", ($q, $http, KeyGetter)=>{
    return i*0.000621371192;
   }
 
-  return {getHistoricalMarkersInRadius, getArtInPublicPlacesMarkersInRadius, getMetroPublicArtMarkersInRadius, getDistanceToMarker};
+  return {getDistanceToMarker, getManualDistanceToMarker};
 });

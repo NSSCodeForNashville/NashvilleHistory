@@ -1,5 +1,28 @@
 <ion-view view-title="My Tours">
-  <ion-content>
-    <h1>My Tours</h1>
-  </ion-content>
+<ion-content>
+  <h1>My Tours</h1>
+  <div class="list card" ng-repeat="(key, tour) in $parent.loggedInUser.customTours" >
+    <div class="item item-divider">
+        <i class="icon ion-compass"></i>
+        <span> {{tour.name}} - {{tour.places | keylength}} place(s)</span>
+    </div>
+    <div class="item item-text-wrap" ng-show="tour.description">
+      {{tour.description}}
+    </div>
+    <div class="item item-text-wrap" ng-show="!tour.description">
+      I'm an adventure waiting to happen!
+    </div>
+    <div class="button-bar">
+      <a class="button danger" ng-click="deleteTour(key)">
+        <i class="icon ion-trash-b"></i> Delete
+      </a>
+      <a class="button danger" href="#/app/edit-tour/{{key}}">
+        <i class="icon ion-edit"></i> Edit
+      </a>
+      <a class="button danger" ng-click="">
+        <i class="icon ion-navigate"></i> Go
+      </a>
+    </div>
+  </div>
+</ion-content>
 </ion-view>

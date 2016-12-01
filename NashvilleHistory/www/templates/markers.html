@@ -11,20 +11,17 @@
         </ui-gmap-marker>
       <!-- Map markers here -->
         <ui-gmap-markers
-              models="markers" coords="'self'" icon="'icon'" ng-cloak>
+              models="markers" coords="'self'" icon="'icon'" options="'options'" click="markerClick" ng-cloak>
         </ui-gmap-markers>
-        <!-- <ui-gmap-markers
-              models="campgrounds" coords="'self'" icon="'icon'" click="onClickCampgrounds" options="'options'" ng-cloak>
-        </ui-gmap-markers> -->
       </ui-gmap-google-map>
-      <div class="list card" ng-repeat="markerCard in MarkerCards">
+      <div class="list card" ng-repeat="markerCard in $parent.MarkerCards">
         <div class="item item-divider">
           <div class="row">
             <div class="col-75">
-              <i class="fa fa-university" ng-show="markerCard.marker_text"></i>
-              <i class="fa fa-flag" ng-show="markerCard.civil_war_site === 'X'"></i>
-              <i class="fa fa-paint-brush" ng-show="markerCard.description || markerCard.artwork || markerCard.medium"></i>
-              <p class="text-wrap"> {{markerCard.title}} {{markerCard.type}} <span ng-show="markerCard.first_name"> {{markerCard.artwork}} <i> by {{markerCard.first_name}} {{markerCard.last_name}}</i></p>
+              <i class="fa fa-university" ng-show="markerCard.markerType == 'historic'"></i>
+              <i class="fa fa-flag" ng-show="markerCard.civil_war_site"></i>
+              <i class="fa fa-paint-brush" ng-show="markerCard.markerType == 'metroArt' || markerCard.markerType == 'publicArt'"></i>
+              <p class="text-wrap"> {{markerCard.title}} <span ng-show="markerCard.artistName"> <i> by {{markerCard.artistName}}</i></p>
               <p><i> {{markerCard.distance}} mi. away</i></span></p>
             </div>
             <div class="col">
@@ -36,15 +33,61 @@
           </div>
         <div ng-show="showDescription">
           <div class="item item-text-wrap">
-            <img src="{{markerCard.photo_link}}" alt="artwork photo" ng-show="markerCard.photo_link">
+            <img src="{{markerCard.image}}" alt="artwork photo" ng-show="markerCard.image">
             <p>
-              {{markerCard.marker_text}} {{markerCard.description}}
+              {{markerCard.description}}
             </p>
             <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
           </div>
+          <div class="button-bar row">
+            <div class="col-33">
+              <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
+                <i class="icon ion-bookmark"></i> Bookmark
+              </button>
+              <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+            </div>
+            <div class="col-33">
+              <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
+                <i class="icon ion-plus"></i> Add to Route
+              </button>
+            </div>
+            <div class="col-33">
+              <button class="button danger">
+                <i class="icon ion-navigate"></i> Go
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+      <!-- Individual Marker Card when a Marker is clicked -->
+      <div class="list-card" ng-show="markerClicked">
+        <div class="item item-divider">
+          <div class="row">
+            <div class="col-75">
+              <i class="fa fa-university" ng-show="markerCard.markerType == 'historic'"></i>
+              <i class="fa fa-flag" ng-show="markerCard.civil_war_site"></i>
+              <i class="fa fa-paint-brush" ng-show="markerCard.markerType == 'metroArt' || markerCard.markerType == 'publicArt'"></i>
+              <p class="text-wrap"> {{activeMarker.title}} <span ng-show="activeMarker.artistName"> by {{activeMarker.artistName}}</i></p>
+              <p><i> {{activeMarker.distance}} mi. away</i></span></p>
+            </div>
+            <div class="col">
+              <button class="button danger" ng-click="closeActiveMarker()">
+                <i class="icon ion-close"></i>
+              </button>
+            </div>
+          </div>
+        <div>
+          <div class="item item-text-wrap">
+            <img src="{{activeMarker.image}}" alt="artwork photo" ng-show="activeMarker.image">
+            <p>
+              {{activeMarker.description}}
+            </p>
+            <p ng-show="activeMarker.medium"> MEDIUM: {{activeMarker.medium}} </p>
+          </div>
           <div class="button-bar">
             <!-- If logged in -->
-            <button class="button danger" ng-show="$parent.loggedInUser">
+            <button class="button danger" ng-show="$parent.loggedInUser" ng-click="AddToBookmarks(activeMarker)">
               <i class="icon ion-bookmark"></i> Bookmark
             </button>
             <!-- If not logged in -->
@@ -52,7 +95,7 @@
               <i class="icon ion-plus"></i> Bookmark
             </button>
             <!-- If logged in -->
-            <button class="button danger" ng-show="$parent.loggedInUser">
+            <button class="button danger" ng-show="$parent.loggedInUser" ng-click="$parent.tourModal('{{markerCard.uid}}')">
               <i class="icon ion-plus"></i> Add to Route
             </button>
             <!-- If not logged in -->

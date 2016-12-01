@@ -1,44 +1,45 @@
 'use strict';
 
-app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
+app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, BookmarkFact, AuthFact){
 
-  let AllPlaces;
   let HistoricalMarkers;
   let ArtMarkers;
   let CivilWarMarkers;
+  let AllMarkers;
   $scope.artFilter = false;
   $scope.historicalFilter = false;
   $scope.civilWarFilter = false;
-  //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
-  function getAllPlaces(){
-    return $q.all(
-      [AllPlacesFact.getAllHistoricalMarkers(),
-      AllPlacesFact.getAllArtInPublicPlacesMarkers(),
-      AllPlacesFact.getAllMetroPublicArtMarkers()]
-    )
-    .then((data)=>{
-      AllPlaces = data[0].concat(data[1]).concat(data[2]);
-      console.log("All places", AllPlaces);
-      $scope.MarkerCards = AllPlaces;
-    })
-  }
 
-  getAllPlaces();
 
-  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected. 
+  function areMarkersBookmarked (){
+      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          AllMarkers.forEach((marker, index)=>{
+            if (bookmarks[key].uid === marker.uid){
+              $scope.$parent.MarkerCards[index].isBookmarked = true;
+            }
+          })
+        })
+      })
+      $scope.MarkerCards = AllMarkers;
+    }
+
+  //The purpose of the following filter functions is to create a new array with only the type of marker that the user selected.
   $scope.filterArt = ()=>{
     $scope.artFilter = !$scope.artFilter;
     $scope.historicalFilter = false;
     $scope.civilWarFilter = false;
     if ($scope.artFilter){
-      ArtMarkers = AllPlaces.filter((marker)=>{
-        if (marker.artwork || marker.description || marker.medium) {
+      ArtMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
+        if (marker.markerType == "metroArt" || marker.markerType == "publicArt") {
           return marker;
         }
       });
-    $scope.MarkerCards = ArtMarkers;
+      $scope.$parent.MarkerCards = ArtMarkers.sort($scope.$parent.sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
 
@@ -47,14 +48,14 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     $scope.artFilter = false;
     $scope.civilWarFilter = false;
     if ($scope.historicalFilter){
-      HistoricalMarkers = AllPlaces.filter((marker)=>{
-        if (marker.marker_text) {
+      HistoricalMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
+        if (marker.markerType == "historic") {
           return marker;
         }
       });
-      $scope.MarkerCards = HistoricalMarkers;
+      $scope.$parent.MarkerCards = HistoricalMarkers.sort($scope.$parent.sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
 
@@ -63,15 +64,22 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact){
     $scope.historicalFilter = false;
     $scope.artFilter = false;
     if ($scope.civilWarFilter){
-      CivilWarMarkers = AllPlaces.filter((marker)=>{
-        if (marker.civil_war_site === "X") {
+      CivilWarMarkers = $scope.$parent.AllPlaces.filter((marker)=>{
+        if (marker.civil_war_site) {
           return marker;
         }
       });
-      $scope.MarkerCards = CivilWarMarkers;
+      $scope.$parent.MarkerCards = CivilWarMarkers.sort($scope.$parent.sortAllPlaces);
     } else {
-      $scope.MarkerCards = AllPlaces;
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
+
+  $scope.AddToBookmarks = (marker, index)=>{
+      marker.userId = AuthFact.getUserId();
+      $scope.$parent.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker)
+  }
+
 
 });

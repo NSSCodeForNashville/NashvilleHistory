@@ -1,16 +1,18 @@
 'use strict';
 
-app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, MarkerCardsFact, $q) {
+app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, AuthFact, BookmarkFact, MarkerCardsFact, CustomTourFact, $q, $ionicModal) {
 
-  console.log(MarkerCardsFact)
+  // IMPORTANT: Locations are given a Unique Id that is a combination of Lat and Long
+  // Example: Location with lattitude 36.175226 and longitude -86.774255 will have a uid of "36.175226-86.774255"
 
-  $scope.HistoricalCards;
+  // Holds data for displaying location markers on the Google map
   $scope.markers = [];
   $scope.showDescription = false;
-  let AllMarkers;
+  $scope.markerClicked = false;
+  $scope.activeMarker = null;
+  let markerId = 0;
   let lat;
   let long;
-
   //The map needs to be set to something before the location of the user is found by the phone otherwise there is an error.
   $scope.map = {
     center: {
@@ -38,7 +40,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
       console.log(position);
       $scope.map = {
         center: {latitude: position.coords.latitude, longitude: position.coords.longitude },
-        zoom: 12
+        zoom: 13
       };
       $scope.youAreHere = {
         id: 0,
@@ -51,69 +53,66 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         }
       }
       //Once the location of the user is found using geolocation, this function is called to find the markers that are within a certain radius of the user's location.
-      getMarkersWithinRadius();
+      addDistanceToMarkers();
+      addMarkersToView();
     }, function(err) {
       /****** TODO
       Create an error message that the user sees if the location cannot be found ******/
       console.log("Could not get location");
     });
 
-    //The purpose of this function is to get all of the markers in a certain radius from the user, art and historical, from the Nashville Gov API and place them in one array.
-    function getMarkersWithinRadius(){
-      lat = $scope.map.center.latitude.toString();
-      long = $scope.map.center.longitude.toString();
-      return $q.all(
-        [MarkerCardsFact.getHistoricalMarkersInRadius(lat, long, "3500"),
-        MarkerCardsFact.getArtInPublicPlacesMarkersInRadius(lat,long, "3500"),
-        MarkerCardsFact.getMetroPublicArtMarkersInRadius(lat, long, "3500")]
-      )
-      .then((data)=>{
-        AllMarkers = data[0].concat(data[1]).concat(data[2]);
-        console.log("All markers", AllMarkers);
-        addDistanceToMarkers();
-        addMarkersToView();
-      })
-    }
 
     function addMarkersToView() {
-      $scope.markers = AllMarkers.map((marker, index)=>{
+      $scope.markers = $scope.$parent.AllPlaces.map((marker, index)=>{
         return {
           id: index,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          name: marker.title
+          name: marker.title,
+          icon: "../img/aquaMarker.png"
         }
       });
-      console.log($scope.markers);
     }
 
-    //The purpose of this function is to take the latitude and longitude of each marker, found by the getMarkersInRadius function above, and find the distance from the user to that marker. This function uses a function in the factory to make a call to Google Maps Distance Matrix API.
+    // The purpose of this function is to take the latitude and longitude of each marker, find the distance from the user to that marker.
+    // This function first calculates distance manually and sorts the AllPlaces array.
+    // Then it confirms distance of the closest 10 results via Google Maps Distance Matrix API and sorts again.
     function addDistanceToMarkers(){
       return $q.all(
-        AllMarkers.map((marker)=>{
-          return MarkerCardsFact.getDistanceToMarker(lat, long, marker.latitude.toString(), marker.longitude.toString())
+        $scope.$parent.AllPlace = $scope.$parent.AllPlaces.map((marker)=>{
+          return MarkerCardsFact.getManualDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(), marker.latitude.toString(), marker.longitude.toString())
         })
       )
       .then((data)=>{
-        console.log("distance data from Google", data)
-        //Adding the distance and duration via car to the AllMarkers array
-        let distanceData = data.forEach((row, index)=>{
-          // If Google API returned the data
-          if (row.rows) {
-            AllMarkers[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
-            AllMarkers[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
-          // Else use the manual calculation
-          } else {
-            AllMarkers[index].distance = row;
-          }
+        //Adding the distance and duration via car to the AllPlaces array
+        data.forEach((row, index)=>{
+            $scope.$parent.AllPlaces[index].distance = row;
         })
         sortMarkersByDistance();
+        var promises = [];
+        for (let i = 0; i < 10; i++) {
+            promises.push(MarkerCardsFact.getDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(),$scope.$parent.AllPlaces[i].latitude.toString(),$scope.$parent.AllPlaces[i].longitude.toString()));
+          }
+        $q.all(promises).then((data) => {
+          data.forEach((row, index)=>{
+            // If Google API returned the data
+            if (row.rows) {
+              $scope.$parent.AllPlaces[index].distance = parseFloat(row.rows[0].elements[0].distance.text.split(" ")[0]);
+              $scope.$parent.AllPlaces[index].duration = parseFloat(row.rows[0].elements[0].duration.text.split(" ")[0]);
+            // Else use manual calculation
+            } else {
+              $scope.$parent.AllPlaces[index].distance = row;
+            }
+          })
+          sortMarkersByDistance();
+        })
       })
     }
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
     function sortMarkersByDistance(){
-      $scope.MarkerCards = sortByKey(AllMarkers, "distance");
+      $scope.$parent.AllPlaces = sortByKey($scope.$parent.AllPlaces, "distance");
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces;
     }
 
     function sortByKey(array, key) {
@@ -122,6 +121,47 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Mark
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
     }
+
+    //TODO: Get the bookmarked markers and make sure the user cannot add a marker twice to his/her bookmarks
+    function areMarkersBookmarked (){
+      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          AllMarkers.forEach((marker, index)=>{
+            if (bookmarks[key].uid  === marker.uid){
+              $scope.$parent.MarkerCards[index].isBookmarked = true;
+            }
+          });
+        });
+      });
+    }
+
+    $scope.AddToBookmarks = (marker, index)=>{
+      marker.userId = AuthFact.getUserId();
+      $scope.$parent.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker);
+    }
+
+    //If a marker is clicked the marker should enlarge - become the BigAquaMarker - and the description of that marker should show up underneath the map. If another marker is clicked, the previously chosen marker will go back to normal size and the selected marker will enlarge.
+    $scope.markerClick = (instance, event, marker)=>{
+      $scope.markers[marker.id].icon = '../img/BigAquaMarker2.png';
+      if (marker.id === markerId){
+        $scope.markerClicked = !$scope.markerClicked;
+      }
+      else {
+        $scope.markers[markerId].icon = '../img/aquaMarker.png';
+        markerId = marker.id;
+        $scope.markerClicked = true;
+      }
+      $scope.activeMarker = marker;
+    }
+    //This will close the description of the active marker and show the list of cards as well as change the chosen marker back to a normal size.
+    $scope.closeActiveMarker = ()=>{
+      $scope.markers[markerId].icon = '../img/aquaMarker.png';
+      $scope.markerClicked = false;
+    }
+
 
   //The following code block watches the user's location and updates the center of the map as the user moves.
   // var watchOptions = { timeout : 5000, enableHighAccuracy: false };

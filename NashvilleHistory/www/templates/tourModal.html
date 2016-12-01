@@ -1,0 +1,45 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Add to Route</h1>
+    <div class="buttons">
+      <button class="button" ng-click="closeTourModal()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <i class="fa fa-university" ng-show="selectedMarker.marker_text"></i>
+    <i class="fa fa-flag" ng-show="selectedMarker.civil_war_site === 'X'"></i>
+    <i class="fa fa-paint-brush" ng-show="selectedMarker.description || selectedMarker.artwork || selectedMarker.medium"></i>
+    <p class="text-wrap"> {{selectedMarker.title}} {{selectedMarker.type}}
+      <span ng-show="selectedMarker.first_name"> {{selectedMarker.artwork}} <i> by {{selectedMarker.first_name}} {{selectedMarker.last_name}}</i>
+    </p>
+    <form ng-submit="doAddToRoute()">
+      <div class="list">
+        <label class="item item-input item-select">
+          <div class="input-label">
+            Which Route?
+          </div>
+          <select ng-model="activeTour.id">
+            <option value="">Please Select</option>            
+            <option value="new">*New Route*</option>
+            <option ng-repeat="(key, route) in loggedInUser.customTours" value="{{key}}">{{route.name}}</option>
+          </select>
+        </label>
+        <span class="item" ng-show="loggedInUser.customTours[activeTour.id].places[selectedMarker.uid]">You've already added this place</span>
+        <label class="item item-input" ng-show="activeTour.id == 'new'">
+          <span class="input-label">Route Title</span>
+          <input type="text" ng-model="newTour.name">
+        </label>
+        <label class="item item-input" ng-show="activeTour.id == 'new'">
+          <span class="input-label">Route Description</span>
+          <textarea placeholder="Optional" ng-model="newTour.description"></textarea>
+        </label>
+        <label class="item" ng-show="activeTour.id == 'new'">
+          <button class="button button-block button-positive" type="submit" ng-disabled="newTour.name == '' || newTour.name == undefined">Add to New Route</button>
+        </label>
+        <label class="item" ng-show="activeTour.id != 'new'">
+          <button class="button button-block button-positive" type="submit"  ng-disabled="activeTour.id == ''">Add to Route</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>

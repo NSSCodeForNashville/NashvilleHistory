@@ -122,21 +122,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
       });
     }
 
-    //TODO: Get the bookmarked markers and make sure the user cannot add a marker twice to his/her bookmarks
-    function areMarkersBookmarked (){
-      BookmarkFact.getAllBookmarks(AuthFact.getUserId())
-      .then((bookmarks)=>{
-        console.log("bookmarked markers", bookmarks);
-        Object.keys(bookmarks).map((key)=>{
-          AllMarkers.forEach((marker, index)=>{
-            if (bookmarks[key].uid  === marker.uid){
-              $scope.$parent.MarkerCards[index].isBookmarked = true;
-            }
-          });
-        });
-      });
-    }
-
     $scope.AddToBookmarks = (marker, index)=>{
       marker.userId = AuthFact.getUserId();
       $scope.$parent.MarkerCards[index].isBookmarked = true;

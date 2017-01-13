@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, $ionicSideMenuDelegate) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, BookmarkFact, $ionicSideMenuDelegate) {
 
   // Cards that will be displayed on whichever page
   $scope.MarkerCards;
@@ -165,11 +165,28 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
         .then((tours)=> {
           $scope.loggedInUser.customTours = tours;
         })
+      // Retrieve bookmarks for this user on login
+      areMarkersBookmarked(user);
     } else {
       $scope.loggedInUser = null;
     }
     console.log("Current Logged In User", $scope.loggedInUser)
   });
+
+  // Retrieve user bookmarks and update AllPlaces with new detail
+  function areMarkersBookmarked (user){
+      BookmarkFact.getAllBookmarks(user.uid)
+      .then((bookmarks)=>{
+        console.log("bookmarked markers", bookmarks);
+        Object.keys(bookmarks).map((key)=>{
+          $scope.AllPlaces.forEach((marker, index)=>{
+            if (bookmarks[key].uid === marker.uid){
+              $scope.AllPlaces[index].isBookmarked = true;
+            }
+          })
+        })
+      })
+    }
 
   // Logout
   $scope.logout = function() {

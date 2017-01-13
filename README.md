@@ -23,6 +23,23 @@ npm install
 bower install
 ```
 
+Move the `node_modules` folder that was just created into the `NashvilleHistory/www/lib/` directory.
+
+Create a file `KeyGetter.js` in the `NashvilleHistory/www/js/factories/` directory with the following code:
+
+```
+"use strict";
+
+app.constant("KeyGetter",{
+  apiKey: "{{your Firebase API key}}",
+  authDomain: "{{your Firebase Auth Domain}}",
+  databaseURL: "{{your Firebase Database URL}}",
+  storageBucket: "{{your Firebase Storage Bucket}}",
+  googleMapsKey: "{{your Google Maps API Key}}",
+  historicMarkersKey: "{{your Data.Nashville.Gov API key}}"
+})
+```
+
 Add a CORS extension like [Allow-Control-Allow-Origin: *](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en) to your Chrome browser. In the Settings, check `Enable cross-origin resource sharing` and updated the `Intercepted URLs or URL patterns` to intercept only `https://maps.googleapis.com/*`. Please remove the default pattern of `*://*/*` from the `Intercepted URLs` list if you haven't already.
 
 When all dependencies are installed, from the terminal command line in your `/NashvilleHistory` folder, run `ionic serve`

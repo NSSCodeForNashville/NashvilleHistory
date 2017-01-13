@@ -8,3 +8,4 @@ plugins
 www/js/factories/KeyGetter.js
 .DS_Store
 !www/lib/font-awesome-4.7.0
+*/.DS_Store

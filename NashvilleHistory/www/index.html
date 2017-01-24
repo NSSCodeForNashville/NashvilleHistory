@@ -15,6 +15,7 @@
           .catch(err => console.log('Error', err));
       }
     </script>-->
+    <link rel="stylesheet" type="text/css" href="lib/tooltipster/dist/css/tooltipster.bundle.min.css" />
     <link href="css/ionic.app.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
@@ -35,7 +36,8 @@
     <script src="lib/node_modules/angular-google-maps/dist/angular-google-maps.min.js"></script>
     <script src="lib/node_modules/angular-simple-logger/dist/angular-simple-logger.min.js"></script>
     <script src="lib/firebase/firebase.js"></script>
-    <script src="lib/geofire/dist/geofire.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script type="text/javascript" src="/lib/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <!-- Providers -->
@@ -44,7 +46,7 @@
     <script src="js/factories/AllPlacesFact.js"></script>
     <script src="js/factories/BookmarkFact.js"></script>
     <script src="js/factories/AuthFact.js"></script>
-    <script src="js/factories/CustomTourFact.js"></script>    
+    <script src="js/factories/CustomTourFact.js"></script>
     <!-- Controllers -->
     <script src="js/controllers/AppCtrl.js"></script>
     <script src="js/controllers/MarkersCtrl.js"></script>
@@ -53,6 +55,7 @@
     <script src="js/controllers/ContributeCtrl.js"></script>
     <script src="js/controllers/BookmarkCtrl.js"></script>
     <!-- Directives -->
+    <script src="js/directives/tooltip.js"></script>
     <script src="js/directives/KeysFilter.js"></script>
   </head>
 

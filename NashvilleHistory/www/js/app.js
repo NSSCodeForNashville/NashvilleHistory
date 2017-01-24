@@ -22,11 +22,6 @@ var app = angular.module('starter', ['ionic', 'uiGmapgoogle-maps', 'ionic.native
     databaseURL: creds.databaseURL
   }
   firebase.initializeApp(authConfig);
-  // Create a Firebase reference where GeoFire will store its information
-  var firebaseRef = firebase.database().ref();
-
-  // Create a GeoFire index
-  var geoFire = new GeoFire(firebaseRef);
 })
 
 .config(function($stateProvider, $urlRouterProvider, uiGmapGoogleMapApiProvider, KeyGetter) {

@@ -44,14 +44,26 @@
           </div>
           <div class="button-bar row">
             <div class="col-33">
-              <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
-              <i class="icon ion-bookmark"></i> Bookmark
+              <!-- If logged in -->
+              <button class="button danger" ng-click="AddToBookmarks(markerCard, $index)" ng-show="$parent.loggedInUser" ng-if="!markerCard.isBookmarked">
+                <i class="icon ion-bookmark"></i> Bookmark
               </button>
-              <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+              <span ng-if="markerCard.isBookmarked">
+                <i class="bookmarked"> Bookmarked </i>
+              </span>
+              <!-- If not logged in -->
+              <button class="button danger logged-out tooltip" ng-show="!$parent.loggedInUser" title="Please log in to access this feature" animation="fade">
+                <i class="icon ion-bookmark"></i> Bookmark
+              </button>
             </div>
             <div class="col-33">
-              <button class="button danger" ng-click="$parent.tourModal('{{markerCard.uid}}')">
-              <i class="icon ion-plus"></i> Add to Route
+              <!-- If logged in -->
+              <button class="button danger" ng-click="$parent.tourModal('{{markerCard.uid}}')" ng-show="$parent.loggedInUser">
+                <i class="icon ion-plus"></i> Add to Route
+              </button>
+              <!-- If not logged in -->
+              <button class="button danger logged-out tooltip" ng-show="!$parent.loggedInUser" title="Please log in to access this feature" animation="fade">
+                <i class="icon ion-plus"></i> Add to Route
               </button>
             </div>
             <div class="col-33">

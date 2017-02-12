@@ -170,23 +170,21 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
     } else {
       $scope.loggedInUser = null;
     }
-    console.log("Current Logged In User", $scope.loggedInUser)
   });
 
   // Retrieve user bookmarks and update AllPlaces with new detail
   function areMarkersBookmarked (user){
-      BookmarkFact.getAllBookmarks(user.uid)
-      .then((bookmarks)=>{
-        console.log("bookmarked markers", bookmarks);
-        Object.keys(bookmarks).map((key)=>{
-          $scope.AllPlaces.forEach((marker, index)=>{
-            if (bookmarks[key].uid === marker.uid){
-              $scope.AllPlaces[index].isBookmarked = true;
-            }
-          })
+    BookmarkFact.getAllBookmarks(user.uid)
+    .then((bookmarks)=>{
+      Object.keys(bookmarks).map((key)=>{
+        $scope.AllPlaces.forEach((marker, index)=>{
+          if (bookmarks[key].uid === marker.uid){
+            $scope.AllPlaces[index].isBookmarked = true;
+          }
         })
       })
-    }
+    })
+  }
 
   // Logout
   $scope.logout = function() {

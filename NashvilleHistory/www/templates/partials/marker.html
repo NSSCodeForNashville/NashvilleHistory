@@ -30,6 +30,10 @@
         </button>
         <!-- IF BOOKMARKED -->
         <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+        <!-- IF ON BOOKMARK PAGE -->
+        <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)">
+          <i class="icon ion-close"></i> Remove Bookmark
+        </button>
       </div>
       <div class="col-33">
         <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">

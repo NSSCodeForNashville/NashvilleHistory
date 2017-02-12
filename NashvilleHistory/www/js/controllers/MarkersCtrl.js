@@ -147,12 +147,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
         $scope.activeMarker = $scope.markers[marker.id];
       }
     }
-    //This will close the description of the active marker and show the list of cards as well as change the chosen marker back to a normal size.
-    $scope.closeActiveMarker = ()=>{
-      $scope.markers[markerId].icon = '../img/aquaMarker.png';
-      $scope.markerClicked = false;
-    }
-
 
   //The following code block watches the user's location and updates the center of the map as the user moves.
   // var watchOptions = { timeout : 5000, enableHighAccuracy: false };

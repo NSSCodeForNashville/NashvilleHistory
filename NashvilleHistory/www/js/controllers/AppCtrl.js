@@ -92,7 +92,8 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
       // Assign an Order to the place, according to how many places already exist on this route
       if ($scope.loggedInUser.customTours[$scope.activeTour.id].places) {
         newPlace.order = Object.keys($scope.loggedInUser.customTours[$scope.activeTour.id].places).length + 1;
-        if (newPlace.order >= 17) {
+        //Limit number of routes added to a custom tour to 23
+        if (newPlace.order >= 24) {
           displayalert = true
         }
       } else {

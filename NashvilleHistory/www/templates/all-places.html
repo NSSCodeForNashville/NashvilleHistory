@@ -45,7 +45,7 @@
           <div class="button-bar row">
             <div class="col-33">
               <!-- If logged in -->
-              <button class="button danger" ng-click="AddToBookmarks(markerCard, $index)" ng-show="$parent.loggedInUser" ng-if="!markerCard.isBookmarked">
+              <button class="button danger" ng-click="$parent.AddToBookmarks(markerCard, $index)" ng-show="$parent.loggedInUser" ng-if="!markerCard.isBookmarked">
                 <i class="icon ion-bookmark"></i> Bookmark
               </button>
               <span ng-if="markerCard.isBookmarked">

@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, BookmarkFact, $ionicSideMenuDelegate) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, AuthFact, BookmarkFact, $ionicSideMenuDelegate) {
 
   // Cards that will be displayed on whichever page
   $scope.MarkerCards;
@@ -119,6 +119,14 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
 
   $ionicSideMenuDelegate.canDragContent(false);
 
+
+  $scope.AddToBookmarks = (marker, index)=>{
+    // Saves a markercard to the users bookmarks
+      console.log("working", marker)
+      marker.userId = AuthFact.getUserId();
+      $scope.MarkerCards[index].isBookmarked = true;
+      BookmarkFact.addBookmark(marker);
+    }
   // Current Firebase Logged-In User Object
   $scope.loggedInUser = null;
 

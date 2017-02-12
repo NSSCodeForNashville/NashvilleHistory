@@ -1,0 +1,46 @@
+<div class="item item-divider" ng-class="{historicalMarker: markerCard.marker_text}">
+  <div class="row">
+    <div class="col-75">
+      <i class="fa fa-university" ng-show="markerCard.markerType == 'historic'"></i>
+      <i class="fa fa-flag" ng-show="markerCard.civil_war_site"></i>
+      <i class="fa fa-paint-brush" ng-show="markerCard.markerType == 'metroArt' || markerCard.markerType == 'publicArt'"></i>
+      <p class="text-wrap"> {{markerCard.title}} <span ng-show="markerCard.artistName"> <i> by {{markerCard.artistName}}</i></span></p>
+      <span><i> {{markerCard.distance}} mi. away</i></span>
+    </div>
+    <div class="col">
+      <button class="button danger" ng-click="showDescription = !showDescription ">
+        <i class="icon ion-arrow-down-b" ng-show="!showDescription"></i>
+        <i class="icon ion-arrow-up-b" ng-show="showDescription"></i>
+      </button>
+    </div>
+  </div>
+  <div ng-show="showDescription">
+    <div class="item item-text-wrap">
+      <img src="{{markerCard.image}}" alt="artwork photo" ng-show="markerCard.image">
+      <p>
+        {{markerCard.description}}
+      </p>
+      <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
+    </div>
+    <div class="button-bar row">
+      <div class="col-33">
+        <!-- IF NOT BOOKMARKED -->
+        <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
+          <i class="icon ion-bookmark"></i> Bookmark
+        </button>
+        <!-- IF BOOKMARKED -->
+        <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+      </div>
+      <div class="col-33">
+        <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
+          <i class="icon ion-plus"></i> Add to Route
+        </button>
+      </div>
+      <div class="col-33">
+        <button class="button danger">
+          <i class="icon ion-navigate"></i> Go
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

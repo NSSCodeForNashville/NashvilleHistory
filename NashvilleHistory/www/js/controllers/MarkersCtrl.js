@@ -69,7 +69,8 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
           latitude: marker.latitude,
           longitude: marker.longitude,
           name: marker.title,
-          icon: "../img/aquaMarker.png"
+          icon: "../img/aquaMarker.png",
+          uid: marker.uid
         }
       });
     }
@@ -130,16 +131,21 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
 
     //If a marker is clicked the marker should enlarge - become the BigAquaMarker - and the description of that marker should show up underneath the map. If another marker is clicked, the previously chosen marker will go back to normal size and the selected marker will enlarge.
     $scope.markerClick = (instance, event, marker)=>{
-      $scope.markers[marker.id].icon = '../img/BigAquaMarker2.png';
       if (marker.id === markerId){
-        $scope.markerClicked = !$scope.markerClicked;
+        $scope.markers[markerId].icon = '../img/aquaMarker.png';
+        $scope.markerClicked = false;
+        $scope.activeMarker = null;
       }
       else {
-        $scope.markers[markerId].icon = '../img/aquaMarker.png';
+        // If a marker is already selected, unselect it
+        if ($scope.activeMarker) {
+          $scope.markers[$scope.activeMarker.id].icon = '../img/aquaMarker.png';
+        }
         markerId = marker.id;
+        $scope.markers[marker.id].icon = '../img/BigAquaMarker2.png';
         $scope.markerClicked = true;
+        $scope.activeMarker = $scope.markers[marker.id];
       }
-      $scope.activeMarker = marker;
     }
     //This will close the description of the active marker and show the list of cards as well as change the chosen marker back to a normal size.
     $scope.closeActiveMarker = ()=>{

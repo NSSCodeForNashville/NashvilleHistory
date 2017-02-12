@@ -5,7 +5,8 @@
       <i class="fa fa-flag" ng-show="markerCard.civil_war_site"></i>
       <i class="fa fa-paint-brush" ng-show="markerCard.markerType == 'metroArt' || markerCard.markerType == 'publicArt'"></i>
       <p class="text-wrap"> {{markerCard.title}} <span ng-show="markerCard.artistName"> <i> by {{markerCard.artistName}}</i></span></p>
-      <span><i> {{markerCard.distance}} mi. away</i></span>
+      <!-- DISTANCE, DISABLED ON BOOKMARK PAGE -->
+      <span ng-if="$parent.$parent.getLocation() != '/app/bookmarks'"><i> {{markerCard.distance}} mi. away</i></span>
     </div>
     <div class="col">
       <button class="button danger" ng-click="showDescription = !showDescription ">
@@ -24,14 +25,17 @@
     </div>
     <div class="button-bar row">
       <div class="col-33">
-        <!-- IF NOT BOOKMARKED -->
-        <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
-          <i class="icon ion-bookmark"></i> Bookmark
-        </button>
-        <!-- IF BOOKMARKED -->
-        <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
-        <!-- IF ON BOOKMARK PAGE -->
-        <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)">
+        <!-- BOOKMARK BUTTONS, DISABLED ON BOOKMARK PAGE -->
+        <div ng-if="$parent.$parent.getLocation() != '/app/bookmarks'">
+          <!-- IF NOT BOOKMARKED -->
+          <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
+            <i class="icon ion-bookmark"></i> Bookmark
+          </button>
+          <!-- IF BOOKMARKED -->
+          <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+        </div>
+        <!-- REMOVE BOOKMARK, IF ON BOOKMARK PAGE -->
+        <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)" ng-if="$parent.$parent.getLocation() == '/app/bookmarks'">
           <i class="icon ion-close"></i> Remove Bookmark
         </button>
       </div>

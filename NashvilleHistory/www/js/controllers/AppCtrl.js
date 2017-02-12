@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, BookmarkFact, $ionicSideMenuDelegate) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, $location, CustomTourFact, AllPlacesFact, BookmarkFact, $ionicSideMenuDelegate) {
 
   // Cards that will be displayed on whichever page
   $scope.MarkerCards;
@@ -118,6 +118,10 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   }
 
   $ionicSideMenuDelegate.canDragContent(false);
+
+  $scope.getLocation = function() {
+    return $location.url();
+  }
 
   // Current Firebase Logged-In User Object
   $scope.loggedInUser = null;

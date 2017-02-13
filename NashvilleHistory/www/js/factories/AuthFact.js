@@ -3,7 +3,12 @@
 app.factory("AuthFact", ($q, $http, KeyGetter)=>{
 
   let getUserId = ()=>{
-    return firebase.auth().currentUser.uid;
+    var user = firebase.auth().currentUser;
+    if (user) {
+      return user.uid
+    } else {
+      return null
+    }
   };
 
   return {getUserId};

@@ -1,11 +1,11 @@
 "use strict";
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTourFact, AllPlacesFact, BookmarkFact, $ionicSideMenuDelegate) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, $location, CustomTourFact, AllPlacesFact, BookmarkFact, $ionicSideMenuDelegate) {
 
   // Cards that will be displayed on whichever page
   $scope.MarkerCards;
   // All places available in memory
-  $scope.AllPlaces;
+  $scope.AllPlaces = [];
 
   //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
   function getAllPlaces(){
@@ -119,6 +119,13 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
 
   $ionicSideMenuDelegate.canDragContent(false);
 
+  // Returns the current location, strips any router variables
+  $scope.getLocation = function() {
+    var url = $location.url(); // "/app/location/router-variables"
+    url = url.split("/"); // [ '', 'app', 'location', 'router-variables' ]
+    return url[2]; // location only
+  }
+
   // Current Firebase Logged-In User Object
   $scope.loggedInUser = null;
 
@@ -170,23 +177,21 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
     } else {
       $scope.loggedInUser = null;
     }
-    console.log("Current Logged In User", $scope.loggedInUser)
   });
 
   // Retrieve user bookmarks and update AllPlaces with new detail
   function areMarkersBookmarked (user){
-      BookmarkFact.getAllBookmarks(user.uid)
-      .then((bookmarks)=>{
-        console.log("bookmarked markers", bookmarks);
-        Object.keys(bookmarks).map((key)=>{
-          $scope.AllPlaces.forEach((marker, index)=>{
-            if (bookmarks[key].uid === marker.uid){
-              $scope.AllPlaces[index].isBookmarked = true;
-            }
-          })
+    BookmarkFact.getAllBookmarks(user.uid)
+    .then((bookmarks)=>{
+      Object.keys(bookmarks).map((key)=>{
+        $scope.AllPlaces.forEach((marker, index)=>{
+          if (bookmarks[key].uid === marker.uid){
+            $scope.AllPlaces[index].isBookmarked = true;
+          }
         })
       })
-    }
+    })
+  }
 
   // Logout
   $scope.logout = function() {

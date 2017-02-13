@@ -48,7 +48,8 @@ When all dependencies are installed, from the terminal command line in your `/Na
 Please review and comment on active Issues, and of course submit Issues of your own.
 
 To contribute code:
-1. Assign yourself to any open Issue 
+
+1. Assign yourself to any open Issue
 1. Create a new branch off `master` with the naming convention: Issue#-description. For instance, `51-menu-routing
 1. Plan, ask questions, experiment, code
 1. Code must be well-documented, any copypasta from the internet must include a link to the source
@@ -56,6 +57,7 @@ To contribute code:
 1. When you have satisfied the Issue, you are ready to submit a Pull Request
 
 To submit a Pull Request:
+
 1. In your terminal, from the root directory of the project: `git pull origin master`
 1. Fix any merge conflicts
 1. If you are unclear on any particular conflict, ask another contributor for help
@@ -67,6 +69,7 @@ To submit a Pull Request:
 1. Once at least one peer has reviewed and approved your PR, merge it!
 
 To review a Pull Request:
+
 1. In your terminal, from the root directory of the project: `git fetch`
 1. Perform a `git checkout` for the branch that you are reviewing
 1. Follow the installation procedures above to host the app on your machine

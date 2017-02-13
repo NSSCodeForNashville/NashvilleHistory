@@ -119,8 +119,11 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, $location,
 
   $ionicSideMenuDelegate.canDragContent(false);
 
+  // Returns the current location, strips any router variables
   $scope.getLocation = function() {
-    return $location.url();
+    var url = $location.url(); // "/app/location/router-variables"
+    url = url.split("/"); // [ '', 'app', 'location', 'router-variables' ]
+    return url[2]; // location only
   }
 
   // Current Firebase Logged-In User Object

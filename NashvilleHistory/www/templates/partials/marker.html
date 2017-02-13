@@ -4,9 +4,20 @@
       <i class="fa fa-university" ng-show="markerCard.markerType == 'historic'"></i>
       <i class="fa fa-flag" ng-show="markerCard.civil_war_site"></i>
       <i class="fa fa-paint-brush" ng-show="markerCard.markerType == 'metroArt' || markerCard.markerType == 'publicArt'"></i>
-      <p class="text-wrap"> {{markerCard.title}} <span ng-show="markerCard.artistName"> <i> by {{markerCard.artistName}}</i></span></p>
-      <!-- DISTANCE, DISABLED ON BOOKMARK PAGE -->
-      <span ng-if="$parent.$parent.getLocation() != '/app/bookmarks'"><i> {{markerCard.distance}} mi. away</i></span>
+      <p class="text-wrap">
+        {{markerCard.title}}
+        <span ng-show="markerCard.artistName">
+          <i>
+            by {{markerCard.artistName}}
+          </i>
+        </span>
+      </p>
+      <!-- DISTANCE, DISABLED ON BOOKMARK AND TOUR PAGES -->
+      <span ng-if="$parent.$parent.getLocation() != 'edit-tour' && 'bookmarks'">
+        <i>
+          {{markerCard.distance}} mi. away
+        </i>
+      </span>
     </div>
     <div class="col">
       <button class="button danger" ng-click="showDescription = !showDescription ">
@@ -21,34 +32,59 @@
       <p>
         {{markerCard.description}}
       </p>
-      <p ng-show="markerCard.medium"> MEDIUM: {{markerCard.medium}} </p>
+      <p ng-show="markerCard.medium">
+        MEDIUM: {{markerCard.medium}}
+      </p>
     </div>
-    <div class="button-bar row">
+    <!-- BUTTON GROUP FOR ALL PLACES, NEARBY PLACES, BOOKMARKS -->
+    <div class="button-bar row" ng-if="$parent.$parent.getLocation() != 'edit-tour'">
       <div class="col-33">
         <!-- BOOKMARK BUTTONS, DISABLED ON BOOKMARK PAGE -->
-        <div ng-if="$parent.$parent.getLocation() != '/app/bookmarks'">
+        <div ng-if="$parent.$parent.getLocation() != 'bookmarks'">
           <!-- IF NOT BOOKMARKED -->
           <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to bookmark this" ng-click="AddToBookmarks(markerCard, $index)" ng-if="!markerCard.isBookmarked">
             <i class="icon ion-bookmark"></i> Bookmark
           </button>
           <!-- IF BOOKMARKED -->
-          <span ng-if="markerCard.isBookmarked"> <i class="bookmarked"> Bookmarked </i> </span>
+          <span ng-if="markerCard.isBookmarked">
+            <i class="bookmarked">
+              Bookmarked
+            </i>
+          </span>
         </div>
-        <!-- REMOVE BOOKMARK, IF ON BOOKMARK PAGE -->
-        <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)" ng-if="$parent.$parent.getLocation() == '/app/bookmarks'">
-          <i class="icon ion-close"></i> Remove Bookmark
+        <!-- REMOVE BOOKMARK, ENABLED ON BOOKMARK PAGE -->
+        <button class="button danger tooltip" ng-click="RemoveBookmark(bookmark)" ng-if="$parent.$parent.getLocation() == 'bookmarks'">
+          <i class="icon ion-close"></i>
+          Remove Bookmark
         </button>
       </div>
       <div class="col-33">
         <button class="button danger tooltip" ng-disabled="!$parent.loggedInUser" title="You must be logged in to add this" ng-click="AddToRoute(markerCard)">
-          <i class="icon ion-plus"></i> Add to Route
+          <i class="icon ion-plus"></i>
+          Add to Route
         </button>
       </div>
       <div class="col-33">
         <button class="button danger">
-          <i class="icon ion-navigate"></i> Go
+          <i class="icon ion-navigate"></i>
+          Go
         </button>
       </div>
+    </div>
+    <!-- BUTTON GROUP FOR EDIT-TOUR PAGE -->
+    <div class="button-bar row" ng-if="$parent.$parent.getLocation() == 'edit-tour'">
+      <button class="button danger" ng-click="deletePlace('{{markerCard.uid}}', $index)">
+        <i class="icon ion-trash-b"></i>
+        Delete
+      </button>
+      <button class="button danger" ng-click="increaseOrder('{{markerCard.uid}}', $index)">
+        <i class="icon ion-chevron-up"></i>
+        Move Up
+      </button>
+      <button class="button danger" ng-click="decreaseOrder('{{markerCard.uid}}', $index)">
+        <i class="icon ion-chevron-down"></i>
+        Move Down
+      </button>
     </div>
   </div>
 </div>

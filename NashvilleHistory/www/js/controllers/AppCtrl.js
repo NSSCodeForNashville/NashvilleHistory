@@ -5,7 +5,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, $location,
   // Cards that will be displayed on whichever page
   $scope.MarkerCards;
   // All places available in memory
-  $scope.AllPlaces;
+  $scope.AllPlaces = [];
 
   //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
   function getAllPlaces(){

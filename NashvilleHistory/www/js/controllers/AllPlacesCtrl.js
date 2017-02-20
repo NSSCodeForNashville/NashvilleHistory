@@ -57,12 +57,5 @@ app.controller('AllPlacesCtrl', function($scope, $state, $q, AllPlacesFact, Book
       $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.sort($scope.$parent.sortAllPlaces);
     }
   }
-
-  $scope.AddToBookmarks = (marker, index)=>{
-      marker.userId = AuthFact.getUserId();
-      $scope.$parent.MarkerCards[index].isBookmarked = true;
-      BookmarkFact.addBookmark(marker)
-  }
-
-
+  
 });

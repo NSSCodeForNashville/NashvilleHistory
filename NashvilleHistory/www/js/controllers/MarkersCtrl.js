@@ -54,7 +54,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
       }
       //Once the location of the user is found using geolocation, this function is called to find the markers that are within a certain radius of the user's location.
       addDistanceToMarkers();
-      addMarkersToView();
     }, function(err) {
       /****** TODO
       Create an error message that the user sees if the location cannot be found ******/
@@ -63,15 +62,17 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
 
 
     function addMarkersToView() {
-      $scope.markers = $scope.$parent.AllPlaces.map((marker, index)=>{
-        return {
-          id: index,
-          latitude: marker.latitude,
-          longitude: marker.longitude,
-          name: marker.title,
-          icon: "../img/aquaMarker.png"
-        }
-      });
+      // Add markers to the view once filtered by distance
+        $scope.markers = $scope.$parent.MarkerCards.map((marker, index)=>{
+          return {
+            id: index,
+            latitude: marker.latitude,
+            longitude: marker.longitude,
+            name: marker.title,
+            icon: "../img/aquaMarker.png"
+          }
+        });
+        console.log("add markers to view", $scope.markers);
     }
 
     // The purpose of this function is to take the latitude and longitude of each marker, find the distance from the user to that marker.
@@ -88,7 +89,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
         data.forEach((row, index)=>{
             $scope.$parent.AllPlaces[index].distance = row;
         })
-        sortMarkersByDistance();
+        sortAndLimitMarkersByDistance();
         var promises = [];
         for (let i = 0; i < 10; i++) {
             promises.push(MarkerCardsFact.getDistanceToMarker($scope.map.center.latitude.toString(), $scope.map.center.longitude.toString(),$scope.$parent.AllPlaces[i].latitude.toString(),$scope.$parent.AllPlaces[i].longitude.toString()));
@@ -104,15 +105,16 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
               $scope.$parent.AllPlaces[index].distance = row;
             }
           })
-          sortMarkersByDistance();
+          sortAndLimitMarkersByDistance();
+          addMarkersToView();
         })
       })
     }
 
     //The next two functions sort the markers in the given radius from the closest to the furthest away from the user.
-    function sortMarkersByDistance(){
+    function sortAndLimitMarkersByDistance(){
       $scope.$parent.AllPlaces = sortByKey($scope.$parent.AllPlaces, "distance");
-      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces;
+      $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.filter(isNearby);
     }
 
     function sortByKey(array, key) {
@@ -120,6 +122,13 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
+    }
+
+    function isNearby(marker) {
+      // Limit the markers and marker cards by distance. Change limit if you want to increase/decrease number of results displayed
+      if (marker.distance < 2.5) {
+        return marker;
+      }
     }
 
     $scope.AddToBookmarks = (marker, index)=>{

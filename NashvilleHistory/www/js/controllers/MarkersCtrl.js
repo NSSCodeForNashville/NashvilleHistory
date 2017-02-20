@@ -7,7 +7,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
 
   // Holds data for displaying location markers on the Google map
   $scope.markers = [];
-  $scope.nearbyPlaces = [];
   $scope.showDescription = false;
   $scope.markerClicked = false;
   $scope.activeMarker = null;
@@ -64,7 +63,7 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
 
     function addMarkersToView() {
       // Add markers to the view once filtered by distance
-        $scope.markers = $scope.nearbyPlaces.map((marker, index)=>{
+        $scope.markers = $scope.$parent.MarkerCards.map((marker, index)=>{
           return {
             id: index,
             latitude: marker.latitude,
@@ -116,7 +115,6 @@ app.controller('MarkersCtrl', function($scope, $state, $cordovaGeolocation, Auth
     function sortAndLimitMarkersByDistance(){
       $scope.$parent.AllPlaces = sortByKey($scope.$parent.AllPlaces, "distance");
       $scope.$parent.MarkerCards = $scope.$parent.AllPlaces.filter(isNearby);
-      $scope.nearbyPlaces = $scope.$parent.AllPlaces.filter(isNearby);
     }
 
     function sortByKey(array, key) {

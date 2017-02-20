@@ -6,6 +6,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
   $scope.MarkerCards;
   // All places available in memory
   $scope.AllPlaces;
+  let displayalert = null;
 
   //The purpose of this function is to get all of the markers, art and historical, from the Nashville Gov API and place them in one array.
   function getAllPlaces(){
@@ -91,10 +92,19 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
       // Assign an Order to the place, according to how many places already exist on this route
       if ($scope.loggedInUser.customTours[$scope.activeTour.id].places) {
         newPlace.order = Object.keys($scope.loggedInUser.customTours[$scope.activeTour.id].places).length + 1;
+        //Limit number of routes added to a custom tour to 23
+        if (newPlace.order >= 24) {
+          displayalert = true
+        }
       } else {
         newPlace.order = 1;
       }
-      CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
+      console.log(displayalert)
+      if (displayalert) {
+        alert("You may not add more than 23 places to a tour!")
+        displayalert = false;
+      } else {
+         CustomTourFact.putNewPlace($scope.activeTour.id,$scope.selectedMarker.uid,newPlace)
         .then((response)=> {
           // Add newly created place to user object
           if ($scope.loggedInUser.customTours[$scope.activeTour.id].places) {
@@ -104,6 +114,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $q, CustomTour
             $scope.loggedInUser.customTours[$scope.activeTour.id].places[$scope.selectedMarker.uid] = newPlace;
           }
         })
+      }
     }
     $scope.modal.hide();
     $scope.modal.remove();
